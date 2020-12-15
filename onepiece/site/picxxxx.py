@@ -66,7 +66,9 @@ class PicxxxxCrawler(CrawlerBase):
             href = li.a.get('href')
             comicid = self.get_comicid_by_url(href)
             name = comicid
-            cover_image_url = li.img.get('src')
+            cover_image_url = ''
+            if li.img:
+              cover_image_url = li.img.get('src')
             source_url = urljoin(self.SITE_INDEX, href)
             result.add_result(comicid=comicid,
                               name=name,
