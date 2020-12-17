@@ -1,10 +1,14 @@
 import logging
 import re
+import os
 from urllib.parse import urljoin
+import execjs
 
 from ..crawlerbase import CrawlerBase
 
 logger = logging.getLogger(__name__)
+
+HERE = os.path.abspath(os.path.dirname(__file__))
 
 
 class CocomanhuaCrawler(CrawlerBase):
@@ -18,10 +22,17 @@ class CocomanhuaCrawler(CrawlerBase):
     DEFAULT_SEARCH_NAME = '全职法师'
     DEFAULT_TAG = ""
     COMICID_PATTERN = re.compile(r'/(\d+)/?')
+    REQUIRE_JAVASCRIPT = True
+    COCOMANHUA_JS_PATH = os.path.abspath(os.path.join(HERE, '../js/cocomanhua.js'))
 
     def __init__(self, comicid=None):
         self.comicid = comicid
         super().__init__()
+        crypto_js_dir = os.path.join(self.NODE_MODULES, 'crypto-js')
+        if not os.path.exists(crypto_js_dir):
+            print(crypto_js_dir)
+            raise RuntimeError('pleaese set node_modules directory and install crypto-js first. npm install crypto-js')
+
 
     @property
     def source_url(self):
@@ -54,6 +65,18 @@ class CocomanhuaCrawler(CrawlerBase):
         return book
 
     def get_chapter_item(self, citem):
+        # https://github.com/Amd794/kanleying
+        html = self.get_html(citem.source_url)
+        data = re.search('var C_DATA.*?\'(.*?)\'', html).group(1)
+        js_content = open(self.COCOMANHUA_JS_PATH, encoding='utf-8').read()
+        ctx = execjs.get().compile(js_content, cwd=self.NODE_MODULES)
+        image_urls = ctx.eval(f'getArr("{data}")')
+        return self.new_chapter_item(chapter_number=citem.chapter_number,
+                                     title=citem.title,
+                                     image_urls=image_urls,
+                                     source_url=citem.source_url)
+
+    def _get_chapter_item(self, citem):
         driver = self.create_driver()
         driver.get(citem.source_url)
         total_image = 0

@@ -138,7 +138,10 @@ export ONEPIECE_PROXY_QQ="socks5://127.0.0.1:1082"
 export ONEPIECE_PROXY_XXXX="socks5://127.0.0.1:1082"
 
 # 配置默认的长图质量
-export DEFAULT_QUALITY=95
+export ONEPIECE_QUALITY=95
 # 配置默认的长图最大高度
-export DEFAULT_MAX_HEIGHT=20000
+export ONEPIECE_MAX_HEIGHT=20000
+
+# 配置默认的node模块位置
+export ONEPIECE_NODE_MODULES="/home/key/js/node_modules"
 ```

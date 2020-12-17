@@ -184,6 +184,7 @@ class CrawlerBase():
     SITE_ENCODEING = None
 
     _TAGS_INFO = None
+    NODE_MODULES = ''
 
     def __init__(self):
         self.timeout = 30

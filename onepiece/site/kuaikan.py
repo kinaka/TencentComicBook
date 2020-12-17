@@ -21,6 +21,7 @@ class KuaiKanCrawler(CrawlerBase):
     DEFAULT_SEARCH_NAME = '海贼王'
     DEFAULT_TAG = 'tag_0'
     COMICID_PATTERN = re.compile(r'/web/topic/(\d+)/?')
+    REQUIRE_JAVASCRIPT = True
 
     def __init__(self, comicid=None):
         super().__init__()

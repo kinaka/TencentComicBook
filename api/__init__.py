@@ -48,7 +48,7 @@ def create_app(cfg=ONEPIECE_FLASK_CONFIG):
     app.register_blueprint(manage_app)
     app.register_blueprint(user_app)
 
-    init_session(app)
+    init_crawler(app)
     WorkerPoolMgr.set_worker(const.POOL_SIZE)
     init_db(app)
     if not app.config.get('USERS'):
@@ -56,9 +56,10 @@ def create_app(cfg=ONEPIECE_FLASK_CONFIG):
     return app
 
 
-def init_session(app):
+def init_crawler(app):
     CrawlerBase.DRIVER_PATH = app.config.get('DRIVER_PATH', '')
     CrawlerBase.DRIVER_TYPE = app.config.get('DRIVER_TYPE', '')
+    CrawlerBase.NODE_MODULES = app.config.get('NODE_MODULES', 'node_modules')
     CrawlerBase.HEADLESS = True
     with app.app_context():
         proxy_config = app.config.get(ConfigKey.CRAWLER_PROXY, {})

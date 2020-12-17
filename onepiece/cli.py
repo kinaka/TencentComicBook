@@ -24,7 +24,8 @@ DEFAULT_COOKIES_DIR = os.environ.get('ONEPIECE_COOKIES_DIR') or ''
 DEFAULT_SESSION_DIR = os.environ.get('ONEPIECE_SESSION_DIR') or ''
 DEFAULT_PROXY = os.environ.get('ONEPIECE_PROXY') or ''
 DEFAULT_QUALITY = int(os.environ.get('ONEPIECE_QUALITY', 95))
-DEFAULT_MAX_HEIGHT = int(os.environ.get('DEFAULT_MAX_HEIGHT', 20000))
+DEFAULT_MAX_HEIGHT = int(os.environ.get('ONEPIECE_MAX_HEIGHT', 20000))
+DEFAULT_NODE_MODULES = os.environ.get('ONEPIECE_NODE_MODULES') or 'node_modules'
 
 
 def parse_args():
@@ -125,6 +126,9 @@ def parse_args():
 
     parser.add_argument('--proxy', type=str,
                         help='设置代理，如 --proxy "socks5://user:pass@host:port"')
+
+    parser.add_argument('--node-modules', type=str, default=DEFAULT_NODE_MODULES,
+        help="node_modules 模块目录")
 
     parser.add_argument('-V', '--version', action='version', version=VERSION)
     parser.add_argument('--debug', action='store_true', help="debug")
@@ -270,7 +274,6 @@ def main():
 
     loglevel = logging.DEBUG if args.debug else logging.INFO
     init_logger(level=loglevel)
-    comicbook = ComicBook(site=site, comicid=comicid)
     # 设置代理
     proxy = args.proxy or os.environ.get('ONEPIECE_PROXY_{}'.format(site.upper())) or DEFAULT_PROXY
     if proxy:
@@ -282,7 +285,9 @@ def main():
     WorkerPoolMgr.set_worker(worker=args.worker)
     CrawlerBase.DRIVER_PATH = args.driver_path
     CrawlerBase.DRIVER_TYPE = args.driver_type
+    CrawlerBase.NODE_MODULES = args.node_modules
 
+    comicbook = ComicBook(site=site, comicid=comicid)
     # 加载 session
     if session_path and os.path.exists(session_path):
         SessionMgr.load_session(site=site, path=session_path)
