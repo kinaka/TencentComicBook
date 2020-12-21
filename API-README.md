@@ -343,10 +343,10 @@ curl "http://127.0.0.1:8000/tools/urlinfo?url=https://www.u17.com/comic/53210.ht
 ```
 ### 1.9 获取所有可用的站点配置
 
-`GET /config`
+`GET /crawler/config`
 
 ```sh
-curl "http://127.0.0.1:8000/config"
+curl "http://127.0.0.1:8000/crawler/config"
 ```
 
 ```json

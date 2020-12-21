@@ -18,7 +18,7 @@ def index():
     prefix = current_app.config.get(ConfigKey.URL_PREFIX, '')
     q_site = request.args.get('site')
     api_examples = []
-    for item in crawler.get_all_site_config():
+    for item in crawler.get_all_cralwer_config():
         item['examples'] = []
         if not q_site:
             api_examples.append(item)
@@ -104,15 +104,14 @@ def index():
             "aggregate_examples": aggregate_examples,
             "tools_examples": tools_examples,
             "manage_examples": manage_examples,
-
         }
     )
 
 
-@app.route("/config")
-def api_config():
+@app.route("/crawler/config")
+def crawler_config():
     return jsonify(
         {
-            'configs': crawler.get_all_site_config()
+            'configs': crawler.get_all_cralwer_config()
         }
     )

@@ -122,7 +122,7 @@ def get_all_support_sites():
     return sites
 
 
-def get_all_site_config():
+def get_all_cralwer_config():
     ret = []
     for site in get_all_support_sites():
         crawler = ComicBook.CRAWLER_CLS_MAP[site]
@@ -130,6 +130,8 @@ def get_all_site_config():
             site=site,
             source_name=crawler.SOURCE_NAME,
             source_index=crawler.SITE_INDEX,
-            r18=crawler.R18)
+            r18=crawler.R18,
+            proxy=get_proxy(site)
+        )
         ret.append(item)
     return ret
