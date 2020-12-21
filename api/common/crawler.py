@@ -111,3 +111,25 @@ def parse_url_info(url):
     site = ComicBook.get_site_by_url(url)
     comicid = ComicBook.get_comicid_by_url(site=site, url=url)
     return dict(site=site, comicid=comicid, url=url)
+
+
+def get_all_support_sites():
+    sites = []
+    for site in ComicBook.CRAWLER_CLS_MAP.keys():
+        if site in const.NOT_SUPPORT_SITES:
+            continue
+        sites.append(site)
+    return sites
+
+
+def get_all_site_config():
+    ret = []
+    for site in get_all_support_sites():
+        crawler = ComicBook.CRAWLER_CLS_MAP[site]
+        item = dict(
+            site=site,
+            source_name=crawler.SOURCE_NAME,
+            source_index=crawler.SITE_INDEX,
+            r18=crawler.R18)
+        ret.append(item)
+    return ret

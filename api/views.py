@@ -6,7 +6,7 @@ from flask import (
 )
 from onepiece.comicbook import ComicBook
 
-from . import const
+from .common import crawler
 from .const import ConfigKey
 
 
@@ -17,28 +17,19 @@ app = Blueprint("index", __name__, url_prefix='/',)
 def index():
     prefix = current_app.config.get(ConfigKey.URL_PREFIX, '')
     q_site = request.args.get('site')
-    examples = []
-    if q_site:
-        items = []
-        if q_site in ComicBook.CRAWLER_CLS_MAP:
-            items.append((q_site, ComicBook.CRAWLER_CLS_MAP[q_site]))
-    else:
-        items = ComicBook.CRAWLER_CLS_MAP.items()
-    for site, crawler in items:
-        if site in const.NOT_SUPPORT_SITES:
-            continue
-        item = dict(
-            site=site,
-            source_name=crawler.SOURCE_NAME,
-            source_index=crawler.SITE_INDEX,
-            r18=crawler.R18,
-            examples=[])
-        examples.append(item)
-
+    api_examples = []
+    for item in crawler.get_all_site_config():
+        item['examples'] = []
+        if not q_site:
+            api_examples.append(item)
+        elif item['site'] == q_site:
+            api_examples.append(item)
+    for item in api_examples:
+        site = item['site']
         site_examples = item['examples']
-        comicid = crawler.DEFAULT_COMICID
-        search_name = crawler.DEFAULT_SEARCH_NAME
-        tag = crawler.DEFAULT_TAG
+        comicid = ComicBook.CRAWLER_CLS_MAP[site].DEFAULT_COMICID
+        search_name = ComicBook.CRAWLER_CLS_MAP[site].DEFAULT_SEARCH_NAME
+        tag = ComicBook.CRAWLER_CLS_MAP[site].DEFAULT_TAG
 
         site_examples.append(dict(
             desc='根据漫画id 获取漫画信息',
@@ -109,10 +100,19 @@ def index():
 
     return jsonify(
         {
-            "api_examples": examples,
+            "api_examples": api_examples,
             "aggregate_examples": aggregate_examples,
             "tools_examples": tools_examples,
             "manage_examples": manage_examples,
 
+        }
+    )
+
+
+@app.route("/config")
+def api_config():
+    return jsonify(
+        {
+            'configs': crawler.get_all_site_config()
         }
     )

@@ -29,6 +29,7 @@ gunicorn 'api:create_app()' -b "127.0.0.1:8000" --workers=2 --timeout=10
 - [1.6 根据tag搜索](#16)
 - [1.7 聚合搜索](#17)
 - [1.8 根据url获取comicid](#18)
+- [1.9 获取所有可用的站点配置](#19)
 - [2.0 API管理相关](#20)
 - [2.1 添加到异步任务](#21)
 - [2.2 查看任务列表](#22)
@@ -325,7 +326,13 @@ curl "http://127.0.0.1:8000/aggregate/search?name=海贼&site=bilibili,u17"
 ```
 ### 1.8 根据url获取comicid
 
-`GET /tools/urlinfo?url=https://www.u17.com/comic/53210.html`
+`GET /tools/urlinfo`
+
+请求示例
+
+```sh
+curl "http://127.0.0.1:8000/tools/urlinfo?url=https://www.u17.com/comic/53210.html"
+```
 
 ```json
 {
@@ -334,7 +341,32 @@ curl "http://127.0.0.1:8000/aggregate/search?name=海贼&site=bilibili,u17"
     "url": "https://www.u17.com/comic/53210.html"
 }
 ```
+### 1.9 获取所有可用的站点配置
 
+`GET /config`
+
+```sh
+curl "http://127.0.0.1:8000/config"
+```
+
+```json
+{
+"configs": [
+    {
+        "r18": false,
+        "site": "acg456",
+        "source_index": "http://www.acg456.com/",
+        "source_name": "ACG肆伍陆"
+    },
+    {
+        "r18": false,
+        "site": "bilibili",
+        "source_index": "https://manga.bilibili.com/",
+        "source_name": "哔哩哔哩漫画"
+    },
+    ...
+]
+```
 
 ### 2.0 API管理相关
 
