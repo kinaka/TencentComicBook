@@ -36,7 +36,9 @@ class WnacgCrawler(CrawlerBase):
         name = soup.h2.text.strip()
         author = ''
         desc = soup.find('div', {'class': 'asTBcell uwconn'}).p.text
-        cover_image_url = "https:" + soup.find('div', {'class': 'asTBcell uwthumb'}).img.get('data-original')
+        img = soup.find('div', {'class': 'asTBcell uwthumb'}).img
+        src = img.get('data-original') or img.get('src')
+        cover_image_url = "https:" + src if src else ''
         book = self.new_comicbook_item(name=name,
                                        desc=desc,
                                        cover_image_url=cover_image_url,
@@ -140,7 +142,8 @@ class WnacgCrawler(CrawlerBase):
             name = li.a.get('title')
             name = re.sub(r'<[^>]+>', '', name, re.S)
             comicid = href.rsplit('.', 1)[0].split('-')[-1]
-            cover_image_url = 'http:' + li.img.get('data-original')
+            src = li.img.get('data-original') or li.img.get('src')
+            cover_image_url = "https:" + src if src else ''
             source_url = self.get_source_url(comicid)
             result.add_result(comicid=comicid,
                               name=name,
