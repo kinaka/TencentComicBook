@@ -2,6 +2,7 @@ import time
 import os
 import logging
 import zipfile
+import shutil
 
 from PIL import Image
 
@@ -41,22 +42,17 @@ def parser_chapter_str(chapter_str, last_chapter_number=None, is_all=None):
     except ValueError:
         pass
 
-    appeared = set()
-    chapter_number_list = []
+    chapter_numbers = set()
     for block in chapter_str.split(','):
         if '-' in block:
             start, end = block.split('-', 1)
             start, end = int(start), int(end)
             for number in range(start, end + 1):
-                if number not in appeared:
-                    appeared.add(number)
-                    chapter_number_list.append(number)
+                chapter_numbers.add(number)
         else:
             number = int(block)
-            if number not in appeared:
-                appeared.add(number)
-                chapter_number_list.append(number)
-    return chapter_number_list
+            chapter_numbers.add(number)
+    return sorted(chapter_numbers)
 
 
 def find_all_image(img_dir, sort_by=None):
@@ -116,5 +112,29 @@ def image_dir_to_zipfile(img_dir, target_path):
     for dirpath, dirnames, filenames in os.walk(img_dir):
         for filename in filenames:
             f.write(os.path.join(dirpath, filename), arcname=os.path.join(arc_basename, filename))
+    f.close()
+    return target_path
+
+
+def merge_books(chapter_dirs, output_dir):
+    idx = 1
+    for chapter_dir in chapter_dirs:
+        for image in find_all_image(chapter_dir):
+            ext = image.split('.')[-1]
+            target_path = os.path.join(output_dir, f'{idx}.{ext}')
+            shutil.copy(image, target_path)
+            idx += 1
+
+
+def merge_zip_books(chapter_dirs, target_path):
+    arc_basename = os.path.basename(target_path)
+    f = zipfile.ZipFile(target_path, 'w', zipfile.ZIP_DEFLATED)
+    idx = 1
+    for chapter_dir in chapter_dirs:
+        for image in find_all_image(chapter_dir):
+            ext = image.split('.')[-1]
+            filename = f'{idx}.{ext}'
+            f.write(image, arcname=os.path.join(arc_basename, filename))
+            idx += 1
     f.close()
     return target_path

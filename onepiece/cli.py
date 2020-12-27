@@ -6,7 +6,9 @@ from .comicbook import ComicBook
 from .crawlerbase import CrawlerBase
 from .utils import (
     parser_chapter_str,
-    ensure_file_dir_exists
+    ensure_file_dir_exists,
+    merge_books,
+    merge_zip_books
 )
 from .session import SessionMgr
 from .worker import WorkerPoolMgr
@@ -128,7 +130,9 @@ def parse_args():
                         help='设置代理，如 --proxy "socks5://user:pass@host:port"')
 
     parser.add_argument('--node-modules', type=str, default=DEFAULT_NODE_MODULES,
-        help="node_modules 模块目录")
+                        help="node_modules 模块目录")
+    parser.add_argument('--merge', action='store_true', help="将多话合并成一个文件夹")
+    parser.add_argument('--merge-zip', action='store_true', help="将多话合并成一个压缩包")
 
     parser.add_argument('-V', '--version', action='version', version=VERSION)
     parser.add_argument('--debug', action='store_true', help="debug")
@@ -153,19 +157,22 @@ def init_logger(level=None):
 
 def download_main(comicbook, output_dir, ext_name=None, chapters=None,
                   is_download_all=None, is_gen_pdf=None, is_gen_zip=None,
-                  is_single_image=None, quality=None, max_height=None, mail=None, receivers=None, is_send_mail=None):
+                  is_single_image=None, quality=None, max_height=None, mail=None,
+                  receivers=None, is_send_mail=None, merge=None, merge_zip=None):
     is_gen_pdf = is_gen_pdf or mail
     chapter_str = chapters or '-1'
-    chapter_number_list = parser_chapter_str(chapter_str=chapter_str,
-                                             last_chapter_number=comicbook.get_last_chapter_number(ext_name),
-                                             is_all=is_download_all)
-    for chapter_number in chapter_number_list:
+    chapter_numbers = parser_chapter_str(chapter_str=chapter_str,
+                                         last_chapter_number=comicbook.get_last_chapter_number(ext_name),
+                                         is_all=is_download_all)
+    chapter_dirs = []
+    for chapter_number in chapter_numbers:
         try:
             chapter = comicbook.Chapter(chapter_number, ext_name=ext_name)
             logger.info("正在下载 【{}】 {} 【{}】".format(
                 comicbook.name, chapter.chapter_number, chapter.title))
 
             chapter_dir = chapter.save(output_dir=output_dir)
+            chapter_dirs.append(chapter_dir)
             logger.info("下载成功 %s", chapter_dir)
             if is_single_image:
                 img_path = chapter.save_as_single_image(output_dir=output_dir, quality=quality, max_height=max_height)
@@ -185,6 +192,20 @@ def download_main(comicbook, output_dir, ext_name=None, chapters=None,
         except Exception:
             logger.exception('download comicbook error. site=%s comicid=%s chapter_number=%s',
                              comicbook.crawler.SITE, comicbook.crawler.comicid, chapter_number)
+
+    start = chapter_numbers[0]
+    end = chapter_numbers[-1]
+    if merge:
+        merge_dir = comicbook.get_merge_dir(output_dir=output_dir, start=start, end=end, ext_name=ext_name)
+        ensure_file_dir_exists(dirpath=merge_dir)
+        merge_books(chapter_dirs=chapter_dirs, output_dir=merge_dir)
+        logger.info("合并成单文件夹 %s", merge_dir)
+
+    if merge_zip:
+        merge_zip_path = comicbook.get_merge_zip_path(output_dir=output_dir, start=start, end=end, ext_name=ext_name)
+        ensure_file_dir_exists(filepath=merge_zip_path)
+        merge_zip_books(chapter_dirs=chapter_dirs, target_path=merge_zip_path)
+        logger.info("合并成单个zip文件 %s", merge_zip_path)
 
 
 def download_latest_all(page_str, **kwargs):
@@ -335,7 +356,10 @@ def main():
         mail=mail,
         ext_name=args.ext_name,
         is_send_mail=is_send_mail,
-        receivers=args.receivers)
+        receivers=args.receivers,
+        merge=args.merge,
+        merge_zip=args.merge_zip,
+    )
 
     if args.url_file:
         download_url_list(url_file=args.url_file, **download_main_kwargs)
@@ -351,13 +375,13 @@ def main():
 
     # 保存 session
     if session_path:
-        ensure_file_dir_exists(session_path)
+        ensure_file_dir_exists(filepath=session_path)
         SessionMgr.export_session(site=site, path=session_path)
         logger.info("session saved. path={}".format(session_path))
 
     # 保存 cookies
     if cookies_path:
-        ensure_file_dir_exists(cookies_path)
+        ensure_file_dir_exists(filepath=cookies_path)
         SessionMgr.export_cookies(site=site, path=cookies_path)
         logger.info("cookies saved. path={}".format(cookies_path))
 

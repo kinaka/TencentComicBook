@@ -148,6 +148,26 @@ class ComicBook():
 
         return self.chapter_cache[ext_name][chapter_number]
 
+    def get_merge_dir(self, output_dir, start, end, ext_name=None):
+        first_dir = safe_filename(self.source_name) + ' 合并'
+        second_dir = self.get_comicbook_dir_name(ext_name=ext_name)
+        third_dir = safe_filename("{:>03}-{:>03}".format(start, end))
+        merge_dir = os.path.join(output_dir, first_dir, second_dir, third_dir)
+        return merge_dir
+
+    def get_merge_zip_path(self, output_dir, start, end, ext_name=None):
+        first_dir = safe_filename(self.source_name) + ' 合并zip'
+        second_dir = self.get_comicbook_dir_name(ext_name=ext_name)
+        filename = safe_filename("{:>03}-{:>03}".format(start, end)) + ".zip"
+        merge_zip_path = os.path.join(output_dir, first_dir, second_dir, filename)
+        return merge_zip_path
+
+    def get_comicbook_dir_name(self, ext_name=None):
+        if ext_name:
+            name = safe_filename('{} 【{}】'.format(self.name, ext_name))
+        else:
+            name = safe_filename(self.name)
+        return name
 
 class Chapter():
 
@@ -163,15 +183,11 @@ class Chapter():
     def comicbook(self):
         return self.comicbook_ref()
 
+    def get_comicbook_dir_name(self):
+        return self.comicbook_ref().get_comicbook_dir_name(ext_name=self.ext_name)
+
     def to_dict(self):
         return self.chapter_item.to_dict()
-
-    def get_comicbook_dir_name(self):
-        if self.ext_name:
-            name = safe_filename('{} 【{}】'.format(self.comicbook.name, self.ext_name))
-        else:
-            name = safe_filename(self.comicbook.name)
-        return name
 
     def get_chapter_image_dir(self, output_dir):
         first_dir = safe_filename(self.comicbook.source_name)
@@ -220,7 +236,7 @@ class Chapter():
         pdf_path = self.get_chapter_pdf_path(output_dir)
         if os.path.exists(pdf_path) and not self.images_has_modify(chapter_dir):
             return pdf_path
-        ensure_file_dir_exists(pdf_path)
+        ensure_file_dir_exists(filepath=pdf_path)
         image_dir_to_pdf(img_dir=chapter_dir,
                          target_path=pdf_path,
                          sort_by=lambda x: int(x.split('.')[0]))
@@ -255,5 +271,5 @@ class Chapter():
         zipfile_path = self.get_zipfile_path(output_dir)
         if os.path.exists(zipfile_path) and not self.images_has_modify(chapter_dir):
             return output_dir
-        ensure_file_dir_exists(zipfile_path)
+        ensure_file_dir_exists(filepath=zipfile_path)
         return image_dir_to_zipfile(chapter_dir, zipfile_path)
