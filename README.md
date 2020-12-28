@@ -111,9 +111,11 @@ python3 -m onepiece --site=u17 --comicid=195 --chapter=1
 
 ### 关于登录
 
+#### 方案1
+
 1. 安装selenium: `python3 -m pip install selenium`
 2. 安装chrome浏览器，或其它浏览器
- 3. [下载chromedriver](https://chromedriver.chromium.org/downloads)，或其它浏览器的driver
+3. [下载chromedriver](https://chromedriver.chromium.org/downloads)，或其它浏览器的driver
 4. 登录，并将cookies保存在本地（保存登录状态）
 ```sh
 # 在弹出的浏览器上完成登录。若登录完浏览器没自动关闭，可以手动把浏览器关了
@@ -122,6 +124,14 @@ python3 -m onepiece --site=qq --comicid=505430 --chapter=-1 \
   --driver-path="driver路径" \
   --driver-type="Chrome" \
   --cookies-path="data/cookies/qq.json"
+```
+
+#### 方案二
+
+1. [安装EditThisCookie插件](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg)
+2. 登录某个站点，然后通过插件导出某个站点的cookies，并保存到本地文件 如`qq.json`
+```sh
+python3 -m onepiece --site=qq --comicid=505430 --chapter=-1 --cookies-path="qq.json"
 ```
 
 ### 高级批量下载
