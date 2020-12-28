@@ -1,0 +1,126 @@
+import os
+import configparser
+import logging
+
+from copy import deepcopy
+
+logger = logging.getLogger(__name__)
+
+
+class CrawlerConfig(object):
+    DOWNLOAD_DIR = 'download_dir'
+    CONFIG_FILE = 'config'
+    DRIVER_TYPE = 'driver_type'
+    DRIVER_PATH = 'driver_path'
+    COOKIES_PATH = 'cookies_path'
+    COOKIES_DIR = 'cookies_dir'
+    QUALITY = 'quality'
+    MAX_HEIGHT = 'max_height'
+    NODE_MODULES = 'node_modules'
+    VERIFY = 'verify'
+    WORKER = 'worker'
+
+    DEFAULT_VALUE = {
+        DOWNLOAD_DIR: 'download',
+        DRIVER_TYPE: 'Chrome',
+        QUALITY: 95,
+        MAX_HEIGHT: 20000,
+        NODE_MODULES: 'node_modules',
+        CONFIG_FILE: 'config.ini',
+        WORKER: 4,
+        VERIFY: False
+    }
+
+    TO_ENV_KEY = {
+        DOWNLOAD_DIR: 'ONEPIECE_DOWNLOAD_DIR',
+        CONFIG_FILE: 'ONEPIECE_CONFIG_FILE',
+        DRIVER_TYPE: 'ONEPIECE_DRIVER_TYPE',
+        DRIVER_PATH: 'ONEPIECE_DRIVER_PATH',
+        COOKIES_DIR: 'ONEPIECE_COOKIES_DIR',
+        QUALITY: 'ONEPIECE_QUALITY',
+        MAX_HEIGHT: 'ONEPIECE_MAX_HEIGHT',
+        NODE_MODULES: 'ONEPIECE_NODE_MODULES',
+        WORKER: 'ONEPIECE_WORKER'
+    }
+
+    def __init__(self, args=None):
+        self.config = deepcopy(self.DEFAULT_VALUE)
+        config_file = args.config or self.config[self.CONFIG_FILE]
+        self.config.update(self.read_config(config_file))
+
+        for key in self.TO_ENV_KEY:
+            value = os.environ.get(self.TO_ENV_KEY[key])
+            if value:
+                self.config[key] = value
+        if args:
+            for key in args.__dict__:
+                value = getattr(args, key)
+                if key == 'output':
+                    key = self.DOWNLOAD_DIR
+
+                if value is not None:
+                    self.config[key] = value
+        logger.debug('CrawlerConfig config=%s', self.config)
+
+    @classmethod
+    def read_config(cls, filepath):
+        config = {}
+        if filepath and os.path.exists(filepath):
+            logger.info(f'loading config. config={filepath}')
+            section = 'crawler'
+            parser = configparser.ConfigParser()
+            parser.read(filepath)
+            if parser.has_section(section):
+                config = {key: parser.get(section, key) for key in parser.options(section)}
+        return config
+
+    def get_proxy(self, site):
+        proxy = self.config.get(f'proxy_{site}', '')
+        if not proxy:
+            proxy = os.environ.get('ONEPIECE_PROXY_{}'.format(site.upper()))
+        return proxy
+
+    def get_cookies_path(self, site):
+        cookies_path = None
+        if site:
+            cookies_path = self.config.get(self.COOKIES_PATH)
+        if not cookies_path:
+            cookies_dir = self.config.get(self.COOKIES_DIR, '')
+            cookies_path = os.path.join(cookies_dir, f'{site}.json')
+        return cookies_path
+
+    @property
+    def download_dir(self):
+        return self.config[self.DOWNLOAD_DIR]
+
+    @property
+    def driver_type(self):
+        return self.config[self.DRIVER_PATH]
+
+    @property
+    def driver_path(self):
+        return self.config[self.DRIVER_PATH]
+
+    @property
+    def quality(self):
+        return self.config[self.QUALITY]
+
+    @property
+    def max_height(self):
+        return self.config[self.MAX_HEIGHT]
+
+    @property
+    def node_modules(self):
+        return self.config[self.NODE_MODULES]
+
+    @property
+    def verify(self):
+        return self.config[self.VERIFY]
+
+    @property
+    def output(self):
+        return self.config[self.DOWNLOAD_DIR]
+
+    @property
+    def worker(self):
+        return self.config[self.WORKER]

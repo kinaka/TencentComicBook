@@ -15,3 +15,34 @@ sender_passwd=密码或授权码
 
 # 邮件接收者列表，多个则以半角逗号隔开。如 xxx@qq.com,yyy@qq.com
 receivers=11111@qq.com,22222@qq.com
+
+
+[crawler]
+# 默认的下载目录
+# download_dir=/home/key/Downloads/MyComicBook
+
+# 配置指定站点代理地址
+# proxy_18comic=socks5://127.0.0.1:1082
+# proxy_manhuagui=socks5://127.0.0.1:1082
+# proxy_nhentai=socks5://127.0.0.1:1082
+# proxy_wnacg=socks5://127.0.0.1:1082
+# proxy_acg456=socks5://127.0.0.1:1082
+# proxy_mh1234=socks5://127.0.0.1:1082
+# proxy_177pic=socks5://127.0.0.1:1082
+# proxy_18hmmcg=socks5://127.0.0.1:1082
+# proxy_xiuren=socks5://127.0.0.1:1082
+
+# webdriver 配置
+# driver_type=Chrome
+# driver_path=/home/key/data/chromedriver_win32/chromedriver.exe
+
+# node模块位置
+# node_modules=/home/key/js/node_modules
+
+# cookies存放目录
+# cookies_dir=/home/key/data/cookies
+
+# 长图质量
+# quality=95
+# 长图最大高度
+# max_height=20000

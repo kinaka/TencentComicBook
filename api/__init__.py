@@ -79,7 +79,8 @@ def init_db(app):
         db.create_all()
 
 
-def init_logger(level=None):
+def init_logger(level):
+    loglevel = logging.DEBUG if args.debug else logging.INFO
     level = level or logging.INFO
     logger = logging.getLogger()
     handler = logging.StreamHandler()

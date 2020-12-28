@@ -18,7 +18,7 @@ class WnacgCrawler(CrawlerBase):
     DEFAULT_SEARCH_NAME = '漢化'
     DEFAULT_TAG = "3"
     R18 = True
-    COMICID_PATTERN = re.compile(r'/photos-index-aid-(\d+)\.html')
+    COMICID_PATTERN = re.compile(r'/photos-index-aid-(\d+)')
 
     def __init__(self, comicid=None):
         self.comicid = comicid
@@ -29,7 +29,7 @@ class WnacgCrawler(CrawlerBase):
         return self.get_source_url(self.comicid)
 
     def get_source_url(self, comicid):
-        return urljoin(self.SITE_INDEX, "/photos-index-aid-{}".format(comicid))
+        return urljoin(self.SITE_INDEX, "/photos-index-aid-{}.html".format(comicid))
 
     def get_comicbook_item(self):
         soup = self.get_soup(self.source_url)

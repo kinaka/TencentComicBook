@@ -169,6 +169,23 @@ class ComicBook():
             name = safe_filename(self.name)
         return name
 
+    def init_crawler(self, config):
+        site = self.crawler.SITE
+        proxy = config.get_proxy(site=site)
+        if proxy:
+            logger.info('set proxy. %s', proxy)
+            SessionMgr.set_proxy(site=site, proxy=proxy)
+        if config.verify:
+            logger.info('set verify. verify=True')
+            SessionMgr.set_verify(site=site, verify=True)
+
+        # 加载cookies
+        cookies_path = config.get_cookies_path(site)
+        if cookies_path and os.path.exists(cookies_path):
+            SessionMgr.load_cookies(site=site, path=cookies_path)
+            logger.info('load cookies success. %s', cookies_path)
+
+
 class Chapter():
 
     def __init__(self, comicbook_ref, chapter_item, ext_name=None):

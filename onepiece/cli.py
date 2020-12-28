@@ -1,9 +1,11 @@
 import argparse
 import os
 import logging
+import configparser
+from copy import deepcopy
 
 from .comicbook import ComicBook
-from .crawlerbase import CrawlerBase
+from .crawlerbase import CrawlerBase, Citem
 from .utils import (
     parser_chapter_str,
     ensure_file_dir_exists,
@@ -14,20 +16,10 @@ from .session import SessionMgr
 from .worker import WorkerPoolMgr
 from .utils.mail import Mail
 from . import VERSION
+from .config import CrawlerConfig
 
 logger = logging.getLogger(__name__)
 HERE = os.path.abspath(os.path.dirname(__file__))
-
-DEFAULT_DOWNLOAD_DIR = os.environ.get('ONEPIECE_DOWNLOAD_DIR') or 'download'
-DEFAULT_MAIL_CONFIG_FILE = os.environ.get('ONEPIECE_MAIL_CONFIG_FILE') or ''
-DEFAULT_DRIVER_TYPE = os.environ.get('ONEPIECE_DRIVER_TYPE') or 'Chrome'
-DEFAULT_DRIVER_PATH = os.environ.get('ONEPIECE_DRIVER_PATH') or ''
-DEFAULT_COOKIES_DIR = os.environ.get('ONEPIECE_COOKIES_DIR') or ''
-DEFAULT_SESSION_DIR = os.environ.get('ONEPIECE_SESSION_DIR') or ''
-DEFAULT_PROXY = os.environ.get('ONEPIECE_PROXY') or ''
-DEFAULT_QUALITY = int(os.environ.get('ONEPIECE_QUALITY', 95))
-DEFAULT_MAX_HEIGHT = int(os.environ.get('ONEPIECE_MAX_HEIGHT', 20000))
-DEFAULT_NODE_MODULES = os.environ.get('ONEPIECE_NODE_MODULES') or 'node_modules'
 
 
 def parse_args():
@@ -68,7 +60,7 @@ def parse_args():
     parser.add_argument('-c', '--chapter', type=str, default="-1",
                         help="要下载的章节, 默认下载最新章节。如 -c 666 或者 -c 1-5,7,9-10")
 
-    parser.add_argument('--worker', type=int, default=4, help="线程池数，默认开启4个线程池")
+    parser.add_argument('--worker', type=int, help="线程池数，默认开启4个线程池")
 
     parser.add_argument('--all', action='store_true',
                         help="是否下载该漫画的所有章节, 如 --all")
@@ -77,8 +69,8 @@ def parse_args():
                         help="是否生成pdf文件, 如 --pdf")
     parser.add_argument('--single-image', action='store_true',
                         help="是否拼接成一张图片, 如 --single-image")
-    parser.add_argument('--quality', type=int, default=DEFAULT_QUALITY, help="生成长图的图片质量，最高质量100")
-    parser.add_argument('--max-height', type=int, default=DEFAULT_MAX_HEIGHT, help="长图最大高度，最大高度65500")
+    parser.add_argument('--quality', type=int, help="生成长图的图片质量，最高质量100")
+    parser.add_argument('--max-height', type=int, help="长图最大高度，最大高度65500")
 
     parser.add_argument('--login', action='store_true',
                         help="是否登录账号，如 --login")
@@ -91,9 +83,9 @@ def parse_args():
     parser.add_argument('--zip', action='store_true',
                         help="打包生成zip文件")
 
-    parser.add_argument('--config', default=DEFAULT_MAIL_CONFIG_FILE, help="邮件配置文件路径")
+    parser.add_argument('--config', help="配置文件路径")
 
-    parser.add_argument('-o', '--output', type=str, default=DEFAULT_DOWNLOAD_DIR,
+    parser.add_argument('-o', '--output', type=str,
                         help="文件保存路径，默认保存在当前路径下的download文件夹")
 
     s = ' '.join(['%s(%s)' % (crawler.SITE, crawler.SOURCE_NAME) for crawler in ComicBook.CRAWLER_CLS_MAP.values()])
@@ -105,17 +97,14 @@ def parse_args():
     parser.add_argument('--verify', action='store_true',
                         help="verify")
 
-    parser.add_argument('--driver-path', type=str, help="selenium driver", default=DEFAULT_DRIVER_PATH)
+    parser.add_argument('--driver-path', type=str, help="selenium driver")
 
     parser.add_argument('--driver-type', type=str,
                         choices=CrawlerBase.SUPPORT_DRIVER_TYPE,
-                        default=DEFAULT_DRIVER_TYPE,
-                        help="支持的浏览器: {}. 默认为 {}".format(
-                            ",".join(sorted(CrawlerBase.SUPPORT_DRIVER_TYPE)),
-                            DEFAULT_DRIVER_TYPE)
+                        help="支持的浏览器: {}.".format(
+                            ",".join(sorted(CrawlerBase.SUPPORT_DRIVER_TYPE)))
                         )
 
-    parser.add_argument('--session-path', type=str, help="读取或保存上次使用的session路径")
     parser.add_argument('--cookies-path', type=str, help="读取或保存上次使用的cookies路径")
 
     parser.add_argument('--latest-all', action='store_true', help="下载最近更新里的所有漫画")
@@ -129,7 +118,7 @@ def parse_args():
     parser.add_argument('--proxy', type=str,
                         help='设置代理，如 --proxy "socks5://user:pass@host:port"')
 
-    parser.add_argument('--node-modules', type=str, default=DEFAULT_NODE_MODULES,
+    parser.add_argument('--node-modules', type=str,
                         help="node_modules 模块目录")
     parser.add_argument('--merge', action='store_true', help="将多话合并成一个文件夹")
     parser.add_argument('--merge-zip', action='store_true', help="将多话合并成一个压缩包")
@@ -141,8 +130,8 @@ def parse_args():
     return args
 
 
-def init_logger(level=None):
-    level = level or logging.INFO
+def init_logger(debug=False):
+    level = logging.DEBUG if debug else logging.INFO
     logger = logging.getLogger()
     handler = logging.StreamHandler()
     formatter = logging.Formatter(
@@ -230,7 +219,7 @@ def download_tag_all(tag, page_str, **kwargs):
             download_main(comicbook=next_comicbook, **kwargs)
 
 
-def download_url_list(url_file, **kwargs):
+def download_url_list(config, url_file, **kwargs):
     comicbook = kwargs.pop('comicbook')
     with open(url_file) as f:
         for line in f:
@@ -244,6 +233,7 @@ def download_url_list(url_file, **kwargs):
                 logger.info('Unknown url. url=%s', url)
                 continue
             comicbook = ComicBook(site=site, comicid=comicid)
+            init_crawler(site=site, config=config)
             comicbook.start_crawler()
             echo_comicbook_desc(comicbook=comicbook, ext_name=kwargs.get('ext_name'))
             download_main(comicbook=comicbook, **kwargs)
@@ -274,9 +264,34 @@ def echo_comicbook_desc(comicbook, ext_name=None):
     logger.info(msg)
 
 
+def init_crawler(site, config):
+    proxy = config.get_proxy(site=site)
+    if proxy:
+        logger.info('set proxy. %s', proxy)
+        SessionMgr.set_proxy(site=site, proxy=proxy)
+    if config.verify:
+        logger.info('set verify. verify=True')
+        SessionMgr.set_verify(site=site, verify=True)
+
+    # 加载cookies
+    cookies_path = config.get_cookies_path(site)
+    if cookies_path and os.path.exists(cookies_path):
+        SessionMgr.load_cookies(site=site, path=cookies_path)
+        logger.info('load cookies success. %s', cookies_path)
+
+
+def save_cookies(site, config):
+    cookies_path = config.get_cookies_path(site)
+    if cookies_path:
+        ensure_file_dir_exists(filepath=cookies_path)
+        SessionMgr.export_cookies(site=site, path=cookies_path)
+        logger.info("cookies saved. path={}".format(cookies_path))
+
+
 def main():
     args = parse_args()
-
+    init_logger(debug=args.debug)
+    config = CrawlerConfig(args=args)
     if args.url:
         site = ComicBook.get_site_by_url(args.url)
         if not site:
@@ -286,47 +301,25 @@ def main():
         site = args.site or 'qq'
         comicid = args.comicid
 
-    session_path = args.session_path
-    if not session_path and DEFAULT_SESSION_DIR:
-        session_path = os.path.join(DEFAULT_SESSION_DIR, f'{site}.pickle')
-    cookies_path = args.cookies_path
-    if not cookies_path and DEFAULT_COOKIES_DIR:
-        cookies_path = os.path.join(DEFAULT_COOKIES_DIR, f'{site}.json')
-
-    loglevel = logging.DEBUG if args.debug else logging.INFO
-    init_logger(level=loglevel)
-    # 设置代理
-    proxy = args.proxy or os.environ.get('ONEPIECE_PROXY_{}'.format(site.upper())) or DEFAULT_PROXY
-    if proxy:
-        logger.info('set proxy. %s', proxy)
-        SessionMgr.set_proxy(site=site, proxy=proxy)
-    if args.verify:
-        SessionMgr.set_verify(site=site, verify=True)
-
-    WorkerPoolMgr.set_worker(worker=args.worker)
-    CrawlerBase.DRIVER_PATH = args.driver_path
-    CrawlerBase.DRIVER_TYPE = args.driver_type
-    CrawlerBase.NODE_MODULES = args.node_modules
+    WorkerPoolMgr.set_worker(worker=config.worker)
+    CrawlerBase.DRIVER_PATH = config.driver_path
+    logger.debug('set DRIVER_PATH. DRIVER_PATH=%s', config.driver_path)
+    CrawlerBase.DRIVER_TYPE = config.driver_type
+    logger.debug('set DRIVER_TYPE. DRIVER_TYPE=%s', config.driver_type)
+    CrawlerBase.NODE_MODULES = config.node_modules
+    logger.debug('set NODE_MODULES. NODE_MODULES=%s', config.node_modules)
 
     comicbook = ComicBook(site=site, comicid=comicid)
-    # 加载 session
-    if session_path and os.path.exists(session_path):
-        SessionMgr.load_session(site=site, path=session_path)
-        logger.info('load session success. %s', session_path)
-
-    # 加载cookies
-    if cookies_path and os.path.exists(cookies_path):
-        SessionMgr.load_cookies(site=site, path=cookies_path)
-        logger.info('load cookies success. %s', cookies_path)
-
     if args.login:
         comicbook.crawler.login()
-
+        save_cookies(site=site, config=config)
     if args.show_tags:
+        init_crawler(site=site, config=config)
         show_tags(comicbook=comicbook)
         exit(0)
 
     if args.name:
+        init_crawler(site=site, config=config)
         result = comicbook.search(name=args.name, limit=10)
         msg_list = []
         for item in result:
@@ -345,14 +338,14 @@ def main():
 
     download_main_kwargs = dict(
         comicbook=comicbook,
-        output_dir=args.output,
+        output_dir=config.output,
         chapters=args.chapter,
         is_download_all=args.all,
         is_gen_pdf=args.pdf,
         is_gen_zip=args.zip,
         is_single_image=args.single_image,
-        quality=args.quality,
-        max_height=args.max_height,
+        quality=config.quality,
+        max_height=config.max_height,
         mail=mail,
         ext_name=args.ext_name,
         is_send_mail=is_send_mail,
@@ -362,28 +355,18 @@ def main():
     )
 
     if args.url_file:
-        download_url_list(url_file=args.url_file, **download_main_kwargs)
-    if args.latest_all:
+        download_url_list(config=config, url_file=args.url_file, **download_main_kwargs)
+    elif args.latest_all:
+        init_crawler(site=site, config=config)
         download_latest_all(page_str=args.latest_page, **download_main_kwargs)
     elif args.tag_all:
+        init_crawler(site=site, config=config)
         download_tag_all(tag=args.tag, page_str=args.tag_page, **download_main_kwargs)
     else:
-        logger.info("正在获取最新数据")
+        init_crawler(site=site, config=config)
         comicbook.start_crawler()
         echo_comicbook_desc(comicbook=comicbook, ext_name=args.ext_name)
         download_main(**download_main_kwargs)
-
-    # 保存 session
-    if session_path:
-        ensure_file_dir_exists(filepath=session_path)
-        SessionMgr.export_session(site=site, path=session_path)
-        logger.info("session saved. path={}".format(session_path))
-
-    # 保存 cookies
-    if cookies_path:
-        ensure_file_dir_exists(filepath=cookies_path)
-        SessionMgr.export_cookies(site=site, path=cookies_path)
-        logger.info("cookies saved. path={}".format(cookies_path))
 
 
 if __name__ == '__main__':

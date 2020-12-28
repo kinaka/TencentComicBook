@@ -16,6 +16,7 @@ class WorkerPoolMgr(object):
 
     @classmethod
     def set_worker(cls, worker=4):
+        logger.info('set worker. worker=%s', worker)
         cls.POOL_SIZE = worker
         if cls.WORKER_POOL:
             cls.WORKER_POOL._max_workers = worker
