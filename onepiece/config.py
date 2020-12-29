@@ -95,11 +95,11 @@ class CrawlerConfig(object):
 
     @property
     def driver_type(self):
-        return self.config[self.DRIVER_PATH]
+        return self.config.get(self.DRIVER_TYPE, '')
 
     @property
     def driver_path(self):
-        return self.config[self.DRIVER_PATH]
+        return self.config.get(self.DRIVER_PATH, '')
 
     @property
     def quality(self):
