@@ -331,7 +331,7 @@ def main():
 
     if args.mail:
         is_send_mail = True
-        mail = Mail.init(args.config)
+        mail = Mail.init(config.config_file)
     else:
         is_send_mail = False
         mail = None

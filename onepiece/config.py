@@ -45,8 +45,8 @@ class CrawlerConfig(object):
 
     def __init__(self, args=None):
         self.config = deepcopy(self.DEFAULT_VALUE)
-        config_file = args.config or self.config[self.CONFIG_FILE]
-        self.config.update(self.read_config(config_file))
+        self.config_file = args.config or self.config[self.CONFIG_FILE]
+        self.config.update(self.read_config(self.config_file))
 
         for key in self.TO_ENV_KEY:
             value = os.environ.get(self.TO_ENV_KEY[key])
