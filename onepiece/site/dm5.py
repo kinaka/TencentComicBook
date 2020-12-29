@@ -179,6 +179,20 @@ class DM5Crawler(CrawlerBase):
         url = "https://www.dm5.com/search?title=%s&page=%s" % (name, page)
         soup = self.get_soup(url)
         result = self.new_search_result_item()
+        try:
+            div = soup.find('div', {"class": "banner_detail_form"})
+            cover_image_url = div.img.get('src')
+            name = div.find('p', {'class': 'title'}).a.text
+            href = div.find('p', {'class': 'title'}).a.get('href')
+            comicid = self.get_comicid_by_url(href)
+            source_url = urljoin(self.SITE_INDEX, href)
+            result.add_result(comicid=comicid,
+                              name=name,
+                              cover_image_url=cover_image_url,
+                              source_url=source_url)
+        except Exception:
+            pass
+
         for li in soup.find('ul', {'class': 'mh-list col7'}).find_all('li'):
             href = li.h2.a.get('href')
             comicid = self.get_comicid_by_url(href)
