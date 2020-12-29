@@ -323,10 +323,10 @@ def main():
         result = comicbook.search(name=args.name, limit=10)
         msg_list = []
         for item in result:
-            msg_list.append("\ncomicid={}\t{}\tsource_url={}".format(
+            msg_list.append("comicid={}\t{}\tsource_url={}".format(
                 item.comicid, item.name, item.source_url)
             )
-        logger.info('\n%s', 'n'.join(msg_list))
+        logger.info('\n%s', '\n'.join(msg_list))
         exit(0)
 
     if args.mail:
