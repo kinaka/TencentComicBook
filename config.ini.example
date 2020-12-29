@@ -42,7 +42,16 @@ receivers=11111@qq.com,22222@qq.com
 # cookies存放目录
 # cookies_dir=/home/key/data/cookies
 
-# 长图质量
+# 长图质量 最大100
 # quality=95
-# 长图最大高度
+# 长图最大高度 最大65500
 # max_height=20000
+
+# 图片下载超时时间 单位秒
+image_timeout=30
+
+# 站点访问超时时间 单位秒
+crawler_timeout=30
+
+# 每个章节下载时间间隔 单位秒
+crawler_delay=0

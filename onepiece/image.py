@@ -62,12 +62,13 @@ class ImageDownloader(object):
         try:
             session = self.get_session()
             response = session.get(image_url, timeout=self.timeout, **kwargs)
-            if response.status_code != 200:
-                msg = 'img download error: url=%s status_code=%s' % (image_url, response.status_code)
-                raise ImageDownloadError(msg)
         except Exception as e:
             msg = "img download error: url=%s error: %s" % (image_url, e)
             raise ImageDownloadError(msg) from e
+        if response.status_code != 200:
+            msg = 'img download error: url=%s status_code=%s' % (image_url, response.status_code)
+            raise ImageDownloadError(msg)
+
         ensure_file_dir_exists(target_path)
         with open(target_path, 'wb') as f:
             f.write(response.content)

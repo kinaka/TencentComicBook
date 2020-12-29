@@ -19,6 +19,9 @@ class CrawlerConfig(object):
     NODE_MODULES = 'node_modules'
     VERIFY = 'verify'
     WORKER = 'worker'
+    IMAGE_TIMEOUT = 'image_timeout'
+    CRAWLER_TIMEOUT = 'crawler_timeout'
+    CRAWLER_DELAY = 'crawler_delay'
 
     DEFAULT_VALUE = {
         DOWNLOAD_DIR: 'download',
@@ -28,7 +31,10 @@ class CrawlerConfig(object):
         NODE_MODULES: 'node_modules',
         CONFIG_FILE: 'config.ini',
         WORKER: 4,
-        VERIFY: False
+        VERIFY: False,
+        IMAGE_TIMEOUT: 30,
+        CRAWLER_TIMEOUT: 30,
+        CRAWLER_DELAY: 0,
     }
 
     TO_ENV_KEY = {
@@ -40,13 +46,16 @@ class CrawlerConfig(object):
         QUALITY: 'ONEPIECE_QUALITY',
         MAX_HEIGHT: 'ONEPIECE_MAX_HEIGHT',
         NODE_MODULES: 'ONEPIECE_NODE_MODULES',
-        WORKER: 'ONEPIECE_WORKER'
+        WORKER: 'ONEPIECE_WORKER',
+        IMAGE_TIMEOUT: 'ONEPIECE_IMAGE_TIMEOUT',
+        CRAWLER_TIMEOUT: 'ONEPIECE_CRAWLER_TIMEOUT',
+        CRAWLER_DELAY: 'ONEPIECE_CRAWLER_DELAY'
     }
 
     def __init__(self, args=None):
+        self.args = args
         self.config = deepcopy(self.DEFAULT_VALUE)
-        self.config_file = args.config or self.config[self.CONFIG_FILE]
-        self.config.update(self.read_config(self.config_file))
+        self.config.update(self.read_config(self.get_config_file()))
 
         for key in self.TO_ENV_KEY:
             value = os.environ.get(self.TO_ENV_KEY[key])
@@ -61,6 +70,16 @@ class CrawlerConfig(object):
                 if value is not None:
                     self.config[key] = value
         logger.debug('CrawlerConfig config=%s', self.config)
+
+    def get_config_file(self):
+        config_file = None
+        if self.args:
+            config_file = self.args.config
+        if not config_file:
+            config_file = os.environ.get(self.TO_ENV_KEY[self.CONFIG_FILE])
+        if not config_file:
+            config_file = self.config[self.CONFIG_FILE]
+        return config_file
 
     @classmethod
     def read_config(cls, filepath):
@@ -103,11 +122,11 @@ class CrawlerConfig(object):
 
     @property
     def quality(self):
-        return self.config[self.QUALITY]
+        return int(self.config[self.QUALITY])
 
     @property
     def max_height(self):
-        return self.config[self.MAX_HEIGHT]
+        return int(self.config[self.MAX_HEIGHT])
 
     @property
     def node_modules(self):
@@ -115,7 +134,7 @@ class CrawlerConfig(object):
 
     @property
     def verify(self):
-        return self.config[self.VERIFY]
+        return bool(self.config[self.VERIFY])
 
     @property
     def output(self):
@@ -123,4 +142,16 @@ class CrawlerConfig(object):
 
     @property
     def worker(self):
-        return self.config[self.WORKER]
+        return int(self.config[self.WORKER])
+
+    @property
+    def crawler_timeout(self):
+        return int(self.config[self.CRAWLER_TIMEOUT])
+
+    @property
+    def image_timeout(self):
+        return int(self.config[self.IMAGE_TIMEOUT])
+
+    @property
+    def crawler_delay(self):
+        return int(self.config[self.CRAWLER_DELAY])

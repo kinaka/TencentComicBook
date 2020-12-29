@@ -2,6 +2,7 @@ import argparse
 import os
 import logging
 import configparser
+import time
 from copy import deepcopy
 
 from .comicbook import ComicBook
@@ -122,6 +123,9 @@ def parse_args():
                         help="node_modules 模块目录")
     parser.add_argument('--merge', action='store_true', help="将多话合并成一个文件夹")
     parser.add_argument('--merge-zip', action='store_true', help="将多话合并成一个压缩包")
+    parser.add_argument('--image-timeout', type=int, help="图片下载超时时间")
+    parser.add_argument('--crawler-timeout', type=int, help="站点访问超时时间")
+    parser.add_argument('--crawler-delay', type=int, help="每个章节下载时间间隔")
 
     parser.add_argument('-V', '--version', action='version', version=VERSION)
     parser.add_argument('--debug', action='store_true', help="debug")
@@ -147,7 +151,8 @@ def init_logger(debug=False):
 def download_main(comicbook, output_dir, ext_name=None, chapters=None,
                   is_download_all=None, is_gen_pdf=None, is_gen_zip=None,
                   is_single_image=None, quality=None, max_height=None, mail=None,
-                  receivers=None, is_send_mail=None, merge=None, merge_zip=None):
+                  receivers=None, is_send_mail=None, merge=None, merge_zip=None,
+                  crawler_delay=None):
     is_gen_pdf = is_gen_pdf or mail
     chapter_str = chapters or '-1'
     chapter_numbers = parser_chapter_str(chapter_str=chapter_str,
@@ -181,6 +186,9 @@ def download_main(comicbook, output_dir, ext_name=None, chapters=None,
         except Exception:
             logger.exception('download comicbook error. site=%s comicid=%s chapter_number=%s',
                              comicbook.crawler.SITE, comicbook.crawler.comicid, chapter_number)
+        if crawler_delay:
+            logger.info("crawler delay. sleep %ss", crawler_delay)
+            time.sleep(crawler_delay)
 
     start = chapter_numbers[0]
     end = chapter_numbers[-1]
@@ -310,6 +318,9 @@ def main():
     logger.debug('set NODE_MODULES. NODE_MODULES=%s', config.node_modules)
 
     comicbook = ComicBook(site=site, comicid=comicid)
+    comicbook.set_crawler_timeout(config.crawler_timeout)
+    comicbook.set_image_timeout(config.image_timeout)
+
     if args.login:
         comicbook.crawler.login()
         save_cookies(site=site, config=config)
@@ -331,7 +342,7 @@ def main():
 
     if args.mail:
         is_send_mail = True
-        mail = Mail.init(config.config_file)
+        mail = Mail.init(config.get_config_file())
     else:
         is_send_mail = False
         mail = None
@@ -352,6 +363,7 @@ def main():
         receivers=args.receivers,
         merge=args.merge,
         merge_zip=args.merge_zip,
+        crawler_delay=config.crawler_delay
     )
 
     if args.url_file:
