@@ -218,6 +218,7 @@ class CrawlerBase():
         kwargs.setdefault('headers', {'Referer': self.SITE_INDEX})
         kwargs.setdefault('timeout', self.timeout)
         try:
+            logger.debug('send_request. url=%s kwargs=%s', url, kwargs)
             return session.request(method=method, url=url, **kwargs)
         except Exception as e:
             msg = "URL error. url={}".format(url)

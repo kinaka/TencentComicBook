@@ -23,7 +23,8 @@ class DM5Crawler(CrawlerBase):
     COMICID_PATTERN = re.compile(r'/manhua-(([_a-zA-Z0-9\-]*))/?')
 
     def __init__(self, comicid=None):
-        self.comicid = comicid
+        comicid = comicid or ''
+        self.comicid = comicid.replace('manhua-', '')
         super().__init__()
 
     @property
@@ -42,6 +43,7 @@ class DM5Crawler(CrawlerBase):
         desc = div.find('p', {'class': 'content'}).text.strip()
         author = div.find('p', {'class': 'subtitle'}).text.strip().replace('作者：', '')
         status = ''
+        tag_name = ''
         for span in div.find('p', {'class': 'tip'}).find_all('span'):
             if '状态：' in span.text:
                 status = span.text.replace('状态：', '')
@@ -55,7 +57,8 @@ class DM5Crawler(CrawlerBase):
                                        cover_image_url=cover_image_url,
                                        author=author,
                                        source_url=self.source_url)
-        book.add_tag(name=tag_name, tag=tag_name)
+        if tag_name:
+            book.add_tag(name=tag_name, tag=tag_name)
         try:
             li_list = soup.find('ul', {'id': 'detail-list-select-1'}).find_all('li')
         except Exception:
