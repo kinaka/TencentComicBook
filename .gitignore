@@ -105,3 +105,4 @@ download/
 config.ini
 api/config.py
 data
+node_modules

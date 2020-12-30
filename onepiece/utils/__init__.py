@@ -8,18 +8,24 @@ from PIL import Image
 
 logger = logging.getLogger(__name__)
 
-ILLEGAL_STR = r'\/:*?"<>|'
 
-
-def safe_filename(filename, replace=' '):
+def safe_filename(filename=None, dirname=None, replace=' '):
     """文件名过滤非法字符串
     """
-    replace_illegal_str = str.maketrans(
-        ILLEGAL_STR, replace * len(ILLEGAL_STR))
-    new_filename = filename.translate(replace_illegal_str).strip()
-    if new_filename:
-        return new_filename
-    raise Exception('文件名不合法. new_filename={}'.format(new_filename))
+    if filename:
+        illegal_str = r'\/:*?"<>|'
+        replace_illegal_str = str.maketrans(illegal_str, replace * len(illegal_str))
+        new_filename = filename.translate(replace_illegal_str).strip()
+        if new_filename:
+            return new_filename[:255]
+        raise Exception('文件名不合法. new_filename={}'.format(new_filename))
+    if dirname:
+        illegal_str = r'\/:*?"<>|.'
+        replace_illegal_str = str.maketrans(illegal_str, replace * len(illegal_str))
+        new_dirname = dirname.translate(replace_illegal_str).strip()
+        if new_dirname:
+            return new_dirname[:255]
+        raise Exception('文件名不合法. new_dirname={}'.format(new_dirname))
 
 
 def get_current_time_str():

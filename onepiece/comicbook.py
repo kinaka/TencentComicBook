@@ -149,24 +149,32 @@ class ComicBook():
         return self.chapter_cache[ext_name][chapter_number]
 
     def get_merge_dir(self, output_dir, start, end, ext_name=None):
-        first_dir = safe_filename(self.source_name) + ' 合并'
+        first_dir = self.source_name + ' 合并'
         second_dir = self.get_comicbook_dir_name(ext_name=ext_name)
-        third_dir = safe_filename("{:>03}-{:>03}".format(start, end))
-        merge_dir = os.path.join(output_dir, first_dir, second_dir, third_dir)
+        third_dir = "{:>03}-{:>03}".format(start, end)
+        merge_dir = os.path.join(output_dir,
+                                 safe_filename(dirname=first_dir),
+                                 safe_filename(dirname=second_dir),
+                                 safe_filename(dirname=third_dir)
+                                 )
         return merge_dir
 
     def get_merge_zip_path(self, output_dir, start, end, ext_name=None):
-        first_dir = safe_filename(self.source_name) + ' 合并zip'
+        first_dir = self.source_name + ' 合并zip'
         second_dir = self.get_comicbook_dir_name(ext_name=ext_name)
-        filename = safe_filename("{:>03}-{:>03}".format(start, end)) + ".zip"
-        merge_zip_path = os.path.join(output_dir, first_dir, second_dir, filename)
+        filename = "{:>03}-{:>03}".format(start, end) + ".zip"
+        merge_zip_path = os.path.join(output_dir,
+                                      safe_filename(dirname=first_dir),
+                                      safe_filename(dirname=second_dir),
+                                      safe_filename(filename=filename)
+                                      )
         return merge_zip_path
 
     def get_comicbook_dir_name(self, ext_name=None):
         if ext_name:
-            name = safe_filename('{} 【{}】'.format(self.name, ext_name))
+            name = safe_filename(dirname='{} 【{}】'.format(self.name, ext_name))
         else:
-            name = safe_filename(self.name)
+            name = safe_filename(dirname=self.name)
         return name
 
     def set_image_timeout(self, timeout):
@@ -175,7 +183,6 @@ class ComicBook():
 
     def set_crawler_timeout(self, timeout):
         self.crawler.timeout = timeout
-        site=self.crawler.SITE
         logger.debug("set_crawler_timeout. site=%s timeout=%s", self.crawler.SITE, timeout)
 
 class Chapter():
@@ -199,31 +206,48 @@ class Chapter():
         return self.chapter_item.to_dict()
 
     def get_chapter_image_dir(self, output_dir):
-        first_dir = safe_filename(self.comicbook.source_name)
+        first_dir = self.comicbook.source_name
         second_dir = self.get_comicbook_dir_name()
-        third_dir = safe_filename("{:>03} {}".format(self.chapter_item.chapter_number, self.chapter_item.title))
-        chapter_dir = os.path.join(output_dir, first_dir, second_dir, third_dir)
+        third_dir = "{:>03} {}".format(self.chapter_item.chapter_number, self.chapter_item.title)
+        chapter_dir = os.path.join(output_dir,
+                                   safe_filename(dirname=first_dir),
+                                   safe_filename(dirname=second_dir),
+                                   safe_filename(dirname=third_dir)
+                                   )
+
         return chapter_dir
 
     def get_chapter_pdf_path(self, output_dir):
-        first_dir = safe_filename(self.comicbook.source_name + ' pdf')
+        first_dir = self.comicbook.source_name + ' pdf'
         second_dir = self.get_comicbook_dir_name()
-        filename = safe_filename("{:>03} {}".format(self.chapter_number, self.title)) + ".pdf"
-        pdf_path = os.path.join(output_dir, first_dir, second_dir, filename)
+        filename = "{:>03} {}.pdf".format(self.chapter_number, self.title)
+        pdf_path = os.path.join(output_dir,
+                                safe_filename(dirname=first_dir),
+                                safe_filename(dirname=second_dir),
+                                safe_filename(filename=filename)
+                                )
         return pdf_path
 
     def get_single_image_dir(self, output_dir):
-        first_dir = safe_filename(self.comicbook.source_name + ' 长图')
+        first_dir = self.comicbook.source_name + ' 长图'
         second_dir = self.get_comicbook_dir_name()
-        third_dir = safe_filename("{:>03} {}".format(self.chapter_item.chapter_number, self.chapter_item.title))
-        image_dir = os.path.join(output_dir, first_dir, second_dir, third_dir)
+        third_dir = "{:>03} {}".format(self.chapter_item.chapter_number, self.chapter_item.title)
+        image_dir = os.path.join(output_dir,
+                                 safe_filename(dirname=first_dir),
+                                 safe_filename(dirname=second_dir),
+                                 safe_filename(dirname=third_dir)
+                                 )
         return image_dir
 
     def get_zipfile_path(self, output_dir):
-        first_dir = safe_filename(self.comicbook.source_name + ' zip')
+        first_dir = self.comicbook.source_name + ' zip'
         second_dir = self.get_comicbook_dir_name()
-        filename = safe_filename("{:>03} {}".format(self.chapter_number, self.title)) + ".zip"
-        zipfile_path = os.path.join(output_dir, first_dir, second_dir, filename)
+        filename = "{:>03} {}".format(self.chapter_number, self.title) + ".zip"
+        zipfile_path = os.path.join(output_dir,
+                                    safe_filename(dirname=first_dir),
+                                    safe_filename(dirname=second_dir),
+                                    safe_filename(filename=filename)
+                                    )
         return zipfile_path
 
     def save(self, output_dir):
