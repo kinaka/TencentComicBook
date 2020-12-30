@@ -80,7 +80,6 @@ def init_db(app):
 
 
 def init_logger(level):
-    loglevel = logging.DEBUG if args.debug else logging.INFO
     level = level or logging.INFO
     logger = logging.getLogger()
     handler = logging.StreamHandler()
