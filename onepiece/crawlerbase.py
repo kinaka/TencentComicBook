@@ -169,6 +169,7 @@ class CrawlerBase():
     DEFAULT_COMICID = None
     DEFAULT_SEARCH_NAME = ''
     DEFAULT_TAG = ''
+    DEFAULT_EXT_NAME = ""
 
     DRIVER_PATH = None
     DRIVER_TYPE = None
@@ -176,12 +177,16 @@ class CrawlerBase():
     SUPPORT_DRIVER_TYPE = frozenset(["Firefox", "Chrome", "Opera", "Ie", "Edge"])
     DRIVER_INSTANCE = None
     HEADLESS = False
-    DEFAULT_EXT_NAME = ""
 
+    # 是否需要 nodejs 环境
     REQUIRE_JAVASCRIPT = False
     TAGS = None
     R18 = False
+
+    # 站点编码
     SITE_ENCODEING = None
+    # 是否只有单话
+    SINGLE_CHAPTER = None
 
     _TAGS_INFO = None
     NODE_MODULES = ''

@@ -19,6 +19,7 @@ class WnacgCrawler(CrawlerBase):
     DEFAULT_TAG = "3"
     R18 = True
     COMICID_PATTERN = re.compile(r'/photos-index-aid-(\d+)')
+    SINGLE_CHAPTER = True
 
     def __init__(self, comicid=None):
         self.comicid = comicid
@@ -67,7 +68,7 @@ class WnacgCrawler(CrawlerBase):
                 image_urls.append(url)
 
         return self.new_chapter_item(chapter_number=citem.chapter_number,
-                                     title=citem.title,
+                                     title='',
                                      image_urls=image_urls,
                                      source_url=citem.source_url)
 

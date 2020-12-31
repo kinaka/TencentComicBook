@@ -21,6 +21,7 @@ class NvshensCrawler(CrawlerBase):
     DEFAULT_TAG = "toutiao"
     SITE_ENCODEING = 'utf-8'
     COMICID_PATTERN = re.compile(r'/g/(\d+)/?')
+    SINGLE_CHAPTER = True
 
     def __init__(self, comicid=None):
         super().__init__()
@@ -91,7 +92,7 @@ class NvshensCrawler(CrawlerBase):
                     max_page = mpage
                 image_urls.extend(urls)
         return self.new_chapter_item(chapter_number=citem.chapter_number,
-                                     title=citem.title,
+                                     title='',
                                      image_urls=image_urls,
                                      source_url=citem.source_url)
 

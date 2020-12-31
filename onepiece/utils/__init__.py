@@ -15,16 +15,16 @@ def safe_filename(filename=None, dirname=None, replace=' '):
     if filename:
         illegal_str = r'\/:*?"<>|'
         replace_illegal_str = str.maketrans(illegal_str, replace * len(illegal_str))
-        new_filename = filename.translate(replace_illegal_str).strip()
+        new_filename = filename.translate(replace_illegal_str)[:200].strip()
         if new_filename:
-            return new_filename[:255]
+            return new_filename
         raise Exception('文件名不合法. new_filename={}'.format(new_filename))
     if dirname:
         illegal_str = r'\/:*?"<>|.'
         replace_illegal_str = str.maketrans(illegal_str, replace * len(illegal_str))
-        new_dirname = dirname.translate(replace_illegal_str).strip()
+        new_dirname = dirname.translate(replace_illegal_str)[:200].strip()
         if new_dirname:
-            return new_dirname[:255]
+            return new_dirname
         raise Exception('文件名不合法. new_dirname={}'.format(new_dirname))
 
 

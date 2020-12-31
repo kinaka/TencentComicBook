@@ -20,6 +20,7 @@ class NvshensCrawler(CrawlerBase):
     DEFAULT_TAG = "TuiGirl"
     SITE_ENCODEING = 'utf-8'
     COMICID_PATTERN = re.compile(r'/(.*)\.html')
+    SINGLE_CHAPTER = True
 
     def __init__(self, comicid=None):
         super().__init__()
@@ -57,7 +58,7 @@ class NvshensCrawler(CrawlerBase):
 
     def get_chapter_item(self, citem):
         return self.new_chapter_item(chapter_number=citem.chapter_number,
-                                     title=citem.title,
+                                     title='',
                                      image_urls=citem.image_urls,
                                      source_url=citem.source_url)
 

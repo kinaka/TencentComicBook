@@ -15,6 +15,7 @@ class C18hmmcgCrawler(CrawlerBase):
     SOURCE_NAME = "18h漫！"
     LOGIN_URL = SITE_INDEX
     R18 = True
+    SINGLE_CHAPTER = True
 
     DEFAULT_COMICID = '18H_6809'
     DEFAULT_SEARCH_NAME = '中文'
@@ -46,7 +47,7 @@ class C18hmmcgCrawler(CrawlerBase):
 
     def get_chapter_item(self, citem):
         return self.new_chapter_item(chapter_number=citem.chapter_number,
-                                     title=citem.title,
+                                     title='',
                                      image_urls=citem.image_urls,
                                      source_url=citem.source_url)
 

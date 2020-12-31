@@ -126,6 +126,7 @@ def parse_args():
     parser.add_argument('--image-timeout', type=int, help="图片下载超时时间")
     parser.add_argument('--crawler-timeout', type=int, help="站点访问超时时间")
     parser.add_argument('--crawler-delay', type=int, help="每个章节下载时间间隔")
+    parser.add_argument('--migrate', action='store_true', help="文件夹重命名(旧版本迁移用)")
 
     parser.add_argument('-V', '--version', action='version', version=VERSION)
     parser.add_argument('--debug', action='store_true', help="debug")
@@ -296,10 +297,31 @@ def save_cookies(site, config):
         logger.info("cookies saved. path={}".format(cookies_path))
 
 
+def migrate(comicbook_dir):
+    for crawler_cls in ComicBook.CRAWLER_CLS_MAP.values():
+        if crawler_cls.SINGLE_CHAPTER:
+            dir1 = os.path.join(comicbook_dir, crawler_cls.SOURCE_NAME)
+            for name1 in os.listdir(dir1):
+                dir2 = os.path.join(dir1, name1)
+                if not os.path.isdir(dir2):
+                    continue
+                for name2 in os.listdir(dir2):
+                    dir3 = os.path.join(dir2, name2)
+                    if not os.path.isdir(dir3):
+                        continue
+                    new_name = name2.split(' ')[0]
+                    target = os.path.join(dir2, new_name)
+                    os.rename(dir3, target)
+
+
 def main():
     args = parse_args()
     init_logger(debug=args.debug)
     config = CrawlerConfig(args=args)
+    if args.migrate:
+        migrate(config.output)
+        exit(0)
+
     if args.url:
         site = ComicBook.get_site_by_url(args.url)
         if not site:

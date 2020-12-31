@@ -19,6 +19,7 @@ class PicxxxxCrawler(CrawlerBase):
     DEFAULT_SEARCH_NAME = ''
     DEFAULT_TAG = ""
     COMICID_PATTERN = re.compile(r'(\d{4}[\/\-]\d{2}[\/\-]\d{2}[\/\-]\d+)(?:\.html)?')
+    SINGLE_CHAPTER = True
 
     def __init__(self, comicid=None):
         super().__init__()
@@ -51,7 +52,7 @@ class PicxxxxCrawler(CrawlerBase):
 
     def get_chapter_item(self, citem):
         return self.new_chapter_item(chapter_number=citem.chapter_number,
-                                     title=citem.title,
+                                     title='',
                                      image_urls=citem.image_urls,
                                      source_url=citem.source_url)
 

@@ -214,7 +214,6 @@ class Chapter():
                                    safe_filename(dirname=second_dir),
                                    safe_filename(dirname=third_dir)
                                    )
-
         return chapter_dir
 
     def get_chapter_pdf_path(self, output_dir):
