@@ -1,12 +1,10 @@
 import argparse
 import os
 import logging
-import configparser
 import time
-from copy import deepcopy
 
 from .comicbook import ComicBook
-from .crawlerbase import CrawlerBase, Citem
+from .crawlerbase import CrawlerBase
 from .utils import (
     parser_chapter_str,
     ensure_file_dir_exists,
@@ -210,6 +208,7 @@ def download_latest_all(page_str, **kwargs):
     comicbook = kwargs.pop('comicbook')
     page_str = page_str or '1'
     for page in parser_chapter_str(page_str):
+        logger.info('download_latest_all. current page=%s', page)
         for citem in comicbook.latest(page=page):
             next_comicbook = ComicBook(site=comicbook.crawler.SITE, comicid=citem.comicid)
             next_comicbook.start_crawler()
@@ -221,6 +220,7 @@ def download_tag_all(tag, page_str, **kwargs):
     comicbook = kwargs.pop('comicbook')
     page_str = page_str or '1'
     for page in parser_chapter_str(page_str):
+        logger.info('download_tag_all. current page=%s', page)
         for citem in comicbook.get_tag_result(tag=tag, page=page):
             next_comicbook = ComicBook(site=comicbook.crawler.SITE, comicid=citem.comicid)
             next_comicbook.start_crawler()
