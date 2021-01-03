@@ -24,15 +24,7 @@ class CocomanhuaCrawler(CrawlerBase):
     COMICID_PATTERN = re.compile(r'/(\d+)/?')
     REQUIRE_JAVASCRIPT = True
     COCOMANHUA_JS_PATH = os.path.abspath(os.path.join(HERE, '../js/cocomanhua.js'))
-
-    def __init__(self, comicid=None):
-        self.comicid = comicid
-        super().__init__()
-        crypto_js_dir = os.path.join(self.NODE_MODULES, 'crypto-js')
-        if not os.path.exists(crypto_js_dir):
-            print(crypto_js_dir)
-            raise RuntimeError('pleaese set node_modules directory and install crypto-js first. npm install crypto-js')
-
+    NEEDED_NODE_PACKAGES = ['crypto-js']
 
     @property
     def source_url(self):

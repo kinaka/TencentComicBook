@@ -20,10 +20,6 @@ class Acg456Crawler(CrawlerBase):
     DEFAULT_TAG = "1"
     SITE_ENCODEING = 'utf-8'
 
-    def __init__(self, comicid=None):
-        super().__init__()
-        self.comicid = comicid
-
     @property
     def source_url(self):
         return self.get_source_url(self.comicid)

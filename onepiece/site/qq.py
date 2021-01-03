@@ -23,10 +23,6 @@ class QQCrawler(CrawlerBase):
     DEFAULT_TAG = 'theme_105'
     COMICID_PATTERN = re.compile(r'/Comic/ComicInfo/id/([_a-zA-Z0-9\-]*)/?')
 
-    def __init__(self, comicid=None):
-        super().__init__()
-        self.comicid = self.get_comicid_by_url(comicid)
-
     @property
     def source_url(self):
         return self.get_source_url(self.comicid)

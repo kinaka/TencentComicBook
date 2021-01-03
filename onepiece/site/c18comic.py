@@ -22,10 +22,6 @@ class C18comicCrawler(CrawlerBase):
     DEFAULT_SEARCH_NAME = '騎馬的女孩好想被她騎'
     DEFAULT_TAG = 'CG集'
 
-    def __init__(self, comicid=None):
-        self.comicid = comicid
-        super().__init__()
-
     @property
     def source_url(self):
         return self.get_source_url(self.comicid)

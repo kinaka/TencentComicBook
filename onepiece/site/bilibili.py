@@ -31,11 +31,13 @@ class BilibiliCrawler(CrawlerBase):
     DEFAULT_SEARCH_NAME = '海贼王'
     DEFAULT_TAG = 'is_finish_0'
 
-    def __init__(self, comicid=None):
-        super().__init__()
-        self.comicid = comicid
-        if self.comicid:
-            self.comicid = self.comicid.replace("mc", "")
+    @classmethod
+    def get_comicid_by_url(cls, comicid_or_url):
+        if comicid_or_url and isinstance(comicid_or_url, str):
+            r = cls.COMICID_PATTERN.search(comicid_or_url)
+            comicid = r.group(1) if r else comicid_or_url
+            return comicid.replace("mc", "")
+        return comicid_or_url
 
     @property
     def source_url(self):

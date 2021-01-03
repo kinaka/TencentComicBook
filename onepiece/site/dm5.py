@@ -22,10 +22,13 @@ class DM5Crawler(CrawlerBase):
     DEFAULT_TAG = "31"
     COMICID_PATTERN = re.compile(r'/manhua-(([_a-zA-Z0-9\-]*))/?')
 
-    def __init__(self, comicid=None):
-        comicid = comicid or ''
-        self.comicid = comicid.replace('manhua-', '')
-        super().__init__()
+    @classmethod
+    def get_comicid_by_url(cls, comicid_or_url):
+        if comicid_or_url and isinstance(comicid_or_url, str):
+            r = cls.COMICID_PATTERN.search(comicid_or_url)
+            comicid = r.group(1) if r else comicid_or_url
+            return comicid.replace('manhua-', '')
+        return comicid_or_url
 
     @property
     def source_url(self):

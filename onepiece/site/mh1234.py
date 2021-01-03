@@ -20,10 +20,6 @@ class Mh1234Crawler(CrawlerBase):
     DEFAULT_TAG = "1"
     COMICID_PATTERN = re.compile(r'/comic/(\d+)\.html')
 
-    def __init__(self, comicid=None):
-        self.comicid = comicid
-        super().__init__()
-
     @property
     def source_url(self):
         return self.get_source_url(self.comicid)

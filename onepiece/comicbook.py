@@ -26,7 +26,7 @@ def find_all_crawler():
     for file in os.listdir(os.path.join(HERE, "site")):
         if re.match(r"^[a-zA-Z].*?\.py$", file):
             importlib.import_module(".site.{}".format(file.split(".")[0]), __package__)
-    return CrawlerBase.__subclasses__()
+    return [crawler for crawler in CrawlerBase.__subclasses__() if crawler.SITE_ENABLE]
 
 
 class ComicBook():
@@ -184,6 +184,7 @@ class ComicBook():
     def set_crawler_timeout(self, timeout):
         self.crawler.timeout = timeout
         logger.debug("set_crawler_timeout. site=%s timeout=%s", self.crawler.SITE, timeout)
+
 
 class Chapter():
 

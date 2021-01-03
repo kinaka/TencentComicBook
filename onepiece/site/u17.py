@@ -29,10 +29,6 @@ class U17Crawler(CrawlerBase):
         "2": '新作',
     }
 
-    def __init__(self, comicid=None):
-        super().__init__()
-        self.comicid = comicid
-
     @property
     def source_url(self):
         return self.get_source_url(self.comicid)

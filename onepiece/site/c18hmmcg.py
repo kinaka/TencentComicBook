@@ -22,10 +22,6 @@ class C18hmmcgCrawler(CrawlerBase):
     DEFAULT_TAG = "100"
     COMICID_PATTERN = re.compile(r'/(.*?)\.html')
 
-    def __init__(self, comicid=None):
-        super().__init__()
-        self.comicid = comicid
-
     @property
     def source_url(self):
         return urljoin(self.SITE_INDEX, '%s.html' % self.comicid)

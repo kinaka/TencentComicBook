@@ -2,7 +2,6 @@ import re
 import json
 from urllib.parse import urljoin
 import logging
-import json
 
 import dukpy
 import lzstring
@@ -29,10 +28,6 @@ class ManhuaguiCrawler(CrawlerBase):
         dict(name='连载漫画', tag='lianzai'),
         dict(name='完结漫画', tag='wanjie'),
     ]
-
-    def __init__(self, comicid=None):
-        super().__init__()
-        self.comicid = comicid
 
     @property
     def source_url(self):
@@ -96,7 +91,7 @@ class ManhuaguiCrawler(CrawlerBase):
         js = re.search(r">window.*(\(function\(p.*?)</script>", html).group(1)
         b64_str = re.search(r"[0-9],'([A-Za-z0-9+/=]+?)'", js).group(1)
         s = lzstring.LZString.decompressFromBase64(b64_str)
-        new_js = re.sub(r"'[A-Za-z0-9+/=]*'\[.*\]\('\\x7c'\)", "'"+ s +"'.split('|')", js)
+        new_js = re.sub(r"'[A-Za-z0-9+/=]*'\[.*\]\('\\x7c'\)", "'" + s + "'.split('|')", js)
         res = dukpy.evaljs(new_js)
         return json.loads(re.search(r"(\{.*\})", res).group(1))
 

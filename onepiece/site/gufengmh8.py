@@ -20,10 +20,6 @@ class Gufengmh8Crawler(CrawlerBase):
     DEFAULT_TAG = ""
     COMICID_PATTERN = re.compile(r'/manhua/([_a-zA-Z0-9\-]*)/?')
 
-    def __init__(self, comicid=None):
-        self.comicid = comicid
-        super().__init__()
-
     @property
     def source_url(self):
         return self.get_source_url(self.comicid)

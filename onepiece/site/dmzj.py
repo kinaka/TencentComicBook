@@ -20,10 +20,6 @@ class DmzjCrawler(CrawlerBase):
     DEFAULT_SEARCH_NAME = '海贼'
     DEFAULT_TAG = "0-1-0-0-0-0"
 
-    def __init__(self, comicid=None):
-        self.comicid = comicid
-        super().__init__()
-
     @classmethod
     def get_comicid_by_url(cls, comicid_or_url):
         if comicid_or_url:

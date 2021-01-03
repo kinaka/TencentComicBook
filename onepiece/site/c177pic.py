@@ -21,11 +21,13 @@ class C177picCrawler(CrawlerBase):
     DEFAULT_SEARCH_NAME = '中文'
     DEFAULT_TAG = "tt"
 
-    def __init__(self, comicid=None):
-        super().__init__()
-        self.comicid = comicid
-        if self.comicid:
-            self.comicid = comicid.replace('/', '-')
+    @classmethod
+    def get_comicid_by_url(cls, comicid_or_url):
+        if comicid_or_url and isinstance(comicid_or_url, str):
+            r = cls.COMICID_PATTERN.search(comicid_or_url)
+            comicid = r.group(1) if r else comicid_or_url
+            return comicid.replace('/', '-')
+        return comicid_or_url
 
     @property
     def source_url(self):
@@ -104,7 +106,6 @@ class C177picCrawler(CrawlerBase):
         return self.paesr_book_list(url)
 
     def get_tags(self):
-        soup = self.get_soup(self.SITE_INDEX)
         tags = self.new_tags_item()
         category = '分类'
         for tag_id, tag_name in [

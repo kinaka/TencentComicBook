@@ -21,10 +21,6 @@ class WnacgCrawler(CrawlerBase):
     COMICID_PATTERN = re.compile(r'/photos-index-aid-(\d+)')
     SINGLE_CHAPTER = True
 
-    def __init__(self, comicid=None):
-        self.comicid = comicid
-        super().__init__()
-
     @property
     def source_url(self):
         return self.get_source_url(self.comicid)

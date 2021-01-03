@@ -23,10 +23,6 @@ class KuaiKanCrawler(CrawlerBase):
     COMICID_PATTERN = re.compile(r'/web/topic/(\d+)/?')
     REQUIRE_JAVASCRIPT = True
 
-    def __init__(self, comicid=None):
-        super().__init__()
-        self.comicid = comicid
-
     @property
     def source_url(self):
         return self.get_source_url(self.comicid)

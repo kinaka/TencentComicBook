@@ -23,10 +23,6 @@ class NvshensCrawler(CrawlerBase):
     COMICID_PATTERN = re.compile(r'/g/(\d+)/?')
     SINGLE_CHAPTER = True
 
-    def __init__(self, comicid=None):
-        super().__init__()
-        self.comicid = comicid
-
     @property
     def source_url(self):
         return urljoin(self.SITE_INDEX, "/g/%s" % self.comicid)

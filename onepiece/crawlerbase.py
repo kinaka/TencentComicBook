@@ -1,3 +1,4 @@
+import os
 import datetime
 import time
 import logging
@@ -160,38 +161,58 @@ class TagsItem():
 
 class CrawlerBase():
 
+    # 站点名字
     SOURCE_NAME = "未知"
+    # 站点简称
     SITE = ""
+    # 站点首页
     SITE_INDEX = ""
+    # 登录页面
     LOGIN_URL = ""
 
+    # 从url匹配出漫画ID
     COMICID_PATTERN = re.compile(r'(.*)')
+
+    # 默认的一些配置 方便调试
     DEFAULT_COMICID = None
     DEFAULT_SEARCH_NAME = ''
     DEFAULT_TAG = ''
+
+    # 默认的漫画扩展名字 如 单行本、番外篇等
     DEFAULT_EXT_NAME = ""
 
+    # 站点是否可用
+    SITE_ENABLE = True
+
+    # webdriver execute 执行文件路径
     DRIVER_PATH = None
-    DRIVER_TYPE = None
-    DEFAULT_DRIVER_TYPE = "Chrome"
+    # 驱动类型 默认 Chrome
+    DRIVER_TYPE = "Chrome"
     SUPPORT_DRIVER_TYPE = frozenset(["Firefox", "Chrome", "Opera", "Ie", "Edge"])
     DRIVER_INSTANCE = None
     HEADLESS = False
 
-    # 是否需要 nodejs 环境
-    REQUIRE_JAVASCRIPT = False
-    TAGS = None
+    # 限制级别
     R18 = False
 
     # 站点编码
     SITE_ENCODEING = None
+
     # 是否只有单话
     SINGLE_CHAPTER = None
 
-    _TAGS_INFO = None
-    NODE_MODULES = ''
+    # 是否需要 nodejs 环境
+    REQUIRE_JAVASCRIPT = False
+    # node_modules 模块目录
+    NODE_MODULES = 'node_modules'
 
-    def __init__(self):
+    # 依赖的 node packages
+    NEEDED_NODE_PACKAGES = []
+
+    # 站点标签信息 缓存
+    _TAGS_INFO = None
+
+    def __init__(self, comicid_or_url=None):
         self.timeout = 30
         self._tag_info = None
         if self.REQUIRE_JAVASCRIPT:
@@ -199,6 +220,9 @@ class CrawlerBase():
                 execjs.get()
             except Exception:
                 raise RuntimeError('pleaese install nodejs first. https://nodejs.org/zh-cn/')
+        self.comicid = self.get_comicid_by_url(comicid_or_url=comicid_or_url)
+        if self.NEEDED_NODE_PACKAGES:
+            self.chekc_node_modules()
 
     def set_timeout(self, timeout=30):
         self.timeout = timeout
@@ -393,3 +417,12 @@ class CrawlerBase():
                 if tag['name'] == name:
                     return tag['tag']
         return ''
+
+    @classmethod
+    def chekc_node_modules(cls):
+        for package in cls.NEEDED_NODE_PACKAGES:
+            crypto_js_dir = os.path.join(cls.NODE_MODULES, package)
+            if not os.path.exists(crypto_js_dir):
+                raise RuntimeError(
+                    f'pleaese set node_modules directory and install {package} first. npm install {package}'
+                )

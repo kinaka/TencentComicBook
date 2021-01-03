@@ -22,10 +22,6 @@ class ManhuadbCrawler(CrawlerBase):
     DEFAULT_EXT_NAME = "连载"
     COMICID_PATTERN = re.compile(r'/manhua/(\d+)/?')
 
-    def __init__(self, comicid=None):
-        self.comicid = comicid
-        super().__init__()
-
     @property
     def source_url(self):
         return self.get_source_url(self.comicid)

@@ -1,7 +1,7 @@
-import os
 import logging
 
 from onepiece.comicbook import ComicBook
+from onepiece.config import CrawlerConfig
 from onepiece.session import SessionMgr
 logger = logging.getLogger()
 
@@ -9,8 +9,10 @@ logger = logging.getLogger()
 def _test_crawl_comicbook(site, comicid=None,
                           chapter_number=1, test_search=True):
     comicbook = ComicBook(site=site, comicid=comicid)
-    proxy = os.environ.get('ONEPIECE_PROXY_{}'.format(site.upper())) or os.environ.get('ONEPIECE_PROXY')
+    config = CrawlerConfig()
+    proxy = config.get_proxy(site=site)
     if proxy:
+        logger.info('set proxy. site=%s proxy=-%s', site, proxy)
         SessionMgr.set_proxy(site=site, proxy=proxy)
     comicbook.start_crawler()
     chapter = comicbook.Chapter(chapter_number=chapter_number)

@@ -21,10 +21,6 @@ class Mh160Crawler(CrawlerBase):
     SITE_ENCODEING = 'utf-8'
     COMICID_PATTERN = re.compile(r'/kanmanhua/([_a-zA-Z0-9\-]*)/?')
 
-    def __init__(self, comicid=None):
-        self.comicid = comicid
-        super().__init__()
-
     @property
     def source_url(self):
         return self.get_source_url(self.comicid)

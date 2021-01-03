@@ -21,11 +21,13 @@ class PicxxxxCrawler(CrawlerBase):
     COMICID_PATTERN = re.compile(r'(\d{4}[\/\-]\d{2}[\/\-]\d{2}[\/\-]\d+)(?:\.html)?')
     SINGLE_CHAPTER = True
 
-    def __init__(self, comicid=None):
-        super().__init__()
-        self.comicid = comicid
-        if self.comicid:
-            self.comicid = self.comicid.replace('/', '-')
+    @classmethod
+    def get_comicid_by_url(cls, comicid_or_url):
+        if comicid_or_url and isinstance(comicid_or_url, str):
+            r = cls.COMICID_PATTERN.search(comicid_or_url)
+            comicid = r.group(1) if r else comicid_or_url
+            return comicid.replace('/', '-')
+        return comicid_or_url
 
     @property
     def source_url(self):

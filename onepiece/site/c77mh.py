@@ -20,10 +20,6 @@ class C77mhCrawler(CrawlerBase):
     DEFAULT_TAG = "chunqing"
     COMICID_PATTERN = re.compile(r'colist_(\d+)\.html')
 
-    def __init__(self, comicid=None):
-        self.comicid = comicid
-        super().__init__()
-
     @property
     def source_url(self):
         return self.get_source_url(self.comicid)
