@@ -129,3 +129,19 @@ def test_xiuren():
 
 def test_2animx():
     _test_crawl_comicbook(site='2animx')
+
+
+def test_mmkk():
+    _test_crawl_comicbook(site='mmkk', test_search=False)
+
+
+def test_55comic():
+    _test_crawl_comicbook(site='55comic')
+
+
+def test_jmzj():
+    _test_crawl_comicbook(site='jmzj')
+
+
+def test_twhentai():
+    _test_crawl_comicbook(site='twhentai')

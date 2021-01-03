@@ -31,6 +31,7 @@ receivers=11111@qq.com,22222@qq.com
 # proxy_177pic=socks5://127.0.0.1:1082
 # proxy_18hmmcg=socks5://127.0.0.1:1082
 # proxy_xiuren=socks5://127.0.0.1:1082
+# proxy_twhentai=socks5://127.0.0.1:1082
 
 # webdriver 配置
 # driver_type=Chrome

@@ -25,7 +25,7 @@ class C55comicCrawler(CrawlerBase):
         return self.get_source_url(self.comicid)
 
     def get_source_url(self, comicid):
-        return urljoin(self.SITE_INDEX, 'book/%s' % comicid)
+        return urljoin(self.SITE_INDEX, '/book/%s' % comicid)
 
     def get_comicbook_item(self):
         soup = self.get_soup(self.source_url)
