@@ -76,7 +76,7 @@ class C55comicCrawler(CrawlerBase):
         for url in base64.b64decode(s.encode()).decode().split(','):
             if not url.startswith('http'):
                 url = urljoin(self.SITE_INDEX, url)
-            if url.index('.jpg') < 0 or int(aid) < int(scramble_id):
+            if '.jpg' not in url or int(aid) < int(scramble_id):
                 image_pipelines.append(None)
             else:
                 image_pipelines.append(self.image_pipeline)

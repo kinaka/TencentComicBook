@@ -79,7 +79,7 @@ class C18comicCrawler(CrawlerBase):
             if not url:
                 url = img_soup.get('src')
 
-            if url.index('.jpg') < 0 or int(aid) < int(scramble_id):
+            if '.jpg' not in url or int(aid) < int(scramble_id):
                 image_pipelines.append(None)
             else:
                 image_pipelines.append(self.image_pipeline)
