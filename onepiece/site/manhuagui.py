@@ -80,10 +80,11 @@ class ManhuaguiCrawler(CrawlerBase):
                     if h4.text.strip() == '单话' or len(h4_list) == 1:
                         book.add_chapter(chapter_number=idx, title=title, source_url=full_url)
                         idx += 1
-                    name = h4.text.strip()
-                    ext_idx.setdefault(name, 1)
-                    book.add_chapter(chapter_number=ext_idx[name], title=title, ext_name=name, source_url=full_url)
-                    ext_idx[name] += 1
+                    else:
+                        name = h4.text.strip()
+                        ext_idx.setdefault(name, 1)
+                        book.add_chapter(chapter_number=ext_idx[name], title=title, ext_name=name, source_url=full_url)
+                        ext_idx[name] += 1
         return book
 
     def get_image_data_from_page(self, html):
