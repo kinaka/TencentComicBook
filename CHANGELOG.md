@@ -1,4 +1,9 @@
 **unreleased**
+**v0.3.20**
+- 去除dukpy依赖
+- 处理window平台下execjs编码错误的问题#52
+- 配置文件编码指定为UTF-8
+
 **v0.3.19**
 - 添加MANIFEST.in文件
 
