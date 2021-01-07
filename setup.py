@@ -108,7 +108,7 @@ setup(
     # },
     install_requires=REQUIRED,
     extras_require=EXTRAS,
-    include_package_data=False,
+    include_package_data=True,
     license='GPL-3.0 License',
     classifiers=[
         # Trove classifiers
