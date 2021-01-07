@@ -3,7 +3,7 @@ import json
 from urllib.parse import urljoin
 import logging
 
-import dukpy
+import execjs
 import lzstring
 
 from ..crawlerbase import CrawlerBase
@@ -92,7 +92,7 @@ class ManhuaguiCrawler(CrawlerBase):
         b64_str = re.search(r"[0-9],'([A-Za-z0-9+/=]+?)'", js).group(1)
         s = lzstring.LZString.decompressFromBase64(b64_str)
         new_js = re.sub(r"'[A-Za-z0-9+/=]*'\[.*\]\('\\x7c'\)", "'" + s + "'.split('|')", js)
-        res = dukpy.evaljs(new_js)
+        res = execjs.eval(new_js)
         return json.loads(re.search(r"(\{.*\})", res).group(1))
 
     def get_chapter_item(self, citem):

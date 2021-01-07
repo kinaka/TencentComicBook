@@ -22,8 +22,7 @@ REQUIRED = [
     "PyExecJS",
     "bs4",
     "jsbeautifier",
-    "lzstring",
-    "dukpy"
+    "lzstring"
 ]
 
 # What packages are optional?
