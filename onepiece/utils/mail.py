@@ -26,7 +26,7 @@ class Mail():
         """
         section = 'mail'
         parser = configparser.ConfigParser()
-        parser.read(filepath)
+        parser.read(filepath, encoding='utf-8')
         sender = parser.get(section, 'sender')
         sender_passwd = parser.get(section, 'sender_passwd')
         receivers = parser.get(section, 'receivers').split(',')

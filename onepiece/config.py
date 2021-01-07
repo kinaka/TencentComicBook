@@ -88,7 +88,7 @@ class CrawlerConfig(object):
             logger.info(f'loading config. config={filepath}')
             section = 'crawler'
             parser = configparser.ConfigParser()
-            parser.read(filepath)
+            parser.read(filepath, encoding='utf-8')
             if parser.has_section(section):
                 config = {key: parser.get(section, key) for key in parser.options(section)}
         return config
