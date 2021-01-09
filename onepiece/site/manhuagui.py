@@ -21,6 +21,7 @@ class ManhuaguiCrawler(CrawlerBase):
     IMAGE_URL_PREFIX = 'https://i.hamreus.com'
     LOGIN_URL = urljoin(SITE_INDEX, "/user/login")
     COMICID_PATTERN = re.compile(r'/comic/(\d+)/?')
+    REQUIRE_JAVASCRIPT = True
 
     DEFAULT_COMICID = '19430'
     DEFAULT_SEARCH_NAME = '鬼灭之刃'
