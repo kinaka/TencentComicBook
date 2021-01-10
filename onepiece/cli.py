@@ -114,6 +114,10 @@ def parse_args():
     parser.add_argument('--tag', type=str, help="标签id")
     parser.add_argument('--tag-page', type=str, help="标签页数，如1-10，默认第1页")
 
+    parser.add_argument('--search-all', action='store_true', help="下载搜索结果的所有漫画")
+    parser.add_argument('--search-page', type=str, help="搜索结果页数，如1-10，默认第1页")
+    parser.add_argument('--search-name', type=str, help="搜索的名字")
+
     parser.add_argument('--proxy', type=str,
                         help='设置代理，如 --proxy "socks5://user:pass@host:port"')
 
@@ -162,7 +166,7 @@ def download_main(comicbook, output_dir, ext_name=None, chapters=None,
         try:
             chapter = comicbook.Chapter(chapter_number, ext_name=ext_name)
             logger.info("正在下载 【{}】 {} 【{}】".format(
-                comicbook.name, chapter.chapter_number, chapter.title))
+                comicbook.name, chapter.chapter_number, chapter.title or chapter.chapter_number))
 
             chapter_dir = chapter.save(output_dir=output_dir)
             chapter_dirs.append(chapter_dir)
@@ -228,6 +232,18 @@ def download_tag_all(tag, page_str, **kwargs):
             download_main(comicbook=next_comicbook, **kwargs)
 
 
+def download_search_all(name, page_str, **kwargs):
+    comicbook = kwargs.pop('comicbook')
+    page_str = page_str or '1'
+    for page in parser_chapter_str(page_str):
+        logger.info('download_search_all. current page=%s', page)
+        for citem in comicbook.search(name=name, page=page):
+            next_comicbook = ComicBook(site=comicbook.crawler.SITE, comicid=citem.comicid)
+            next_comicbook.start_crawler()
+            echo_comicbook_desc(comicbook=next_comicbook, ext_name=kwargs.get('ext_name'))
+            download_main(comicbook=next_comicbook, **kwargs)
+
+
 def download_url_list(config, url_file, **kwargs):
     comicbook = kwargs.pop('comicbook')
     with open(url_file) as f:
@@ -262,13 +278,15 @@ def show_tags(comicbook):
 
 
 def echo_comicbook_desc(comicbook, ext_name=None):
+    last_chapter_number = comicbook.get_last_chapter_number(ext_name)
+    last_chapter_title = comicbook.get_last_chapter_title(ext_name) or str(last_chapter_number)
     name = "{} {}".format(comicbook.name, ext_name) if ext_name else comicbook.name
     msg = ("{source_name} 【{name}】 更新至: {last_chapter_number:>03} "
            "【{last_chapter_title}】 数据来源: {source_url}").format(
         source_name=comicbook.source_name,
         name=name,
-        last_chapter_number=comicbook.get_last_chapter_number(ext_name),
-        last_chapter_title=comicbook.get_last_chapter_title(ext_name),
+        last_chapter_number=last_chapter_number,
+        last_chapter_title=last_chapter_title,
         source_url=comicbook.source_url)
     logger.info(msg)
 
@@ -353,7 +371,7 @@ def main():
 
     if args.name:
         init_crawler(site=site, config=config)
-        result = comicbook.search(name=args.name, limit=10)
+        result = comicbook.search(name=args.name)
         msg_list = []
         for item in result:
             msg_list.append("comicid={}\t{}\tsource_url={}".format(
@@ -396,6 +414,9 @@ def main():
     elif args.tag_all:
         init_crawler(site=site, config=config)
         download_tag_all(tag=args.tag, page_str=args.tag_page, **download_main_kwargs)
+    elif args.search_all:
+        init_crawler(site=site, config=config)
+        download_search_all(name=args.search_name, page_str=args.search_page, **download_main_kwargs)
     else:
         init_crawler(site=site, config=config)
         comicbook.start_crawler()

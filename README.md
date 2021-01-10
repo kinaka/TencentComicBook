@@ -19,6 +19,8 @@
 
 ## 安装/升级步骤
 
+自己找安装Python的教程
+
 ### 方式一（推荐）
 
 ```sh
@@ -112,7 +114,7 @@ python3 -m onepiece --site=bilibili --comicid=mc24742 --chapter=1
 python3 -m onepiece --site=u17 --comicid=195 --chapter=1
 
 # 其它已支持的站点 https://github.com/lossme/ComicBook/projects/1
-# 从章节列表页面的URL
+# 从章节列表页面的URL下载
 python3 -m onepiece --url="https://manga.bilibili.com/detail/mc28603" --chapter=1
 ```
 
@@ -153,6 +155,9 @@ python3 -m onepiece --site=nvshens --show-tags
 
 # 下载标签搜索结果页面的1到10页 所有漫画的全集
 python3 -m onepiece --site=nvshens --tag-all --tag=女神 --tag-page=1-10 --all
+
+# 下载搜索结果的所有漫画的全集
+python3 -m onepiece --site=nhentai --search-all --search-name=汉化 --search-page=1 --all
 ```
 
 ### 高级配置
