@@ -72,7 +72,8 @@ class C36mhCrawler(CrawlerBase):
         html = self.get_html(citem.source_url)
         chapterPath = re.search(r'var chapterPath = "(.*?)";', html).group(1)
         chapterImages = re.search(r'var chapterImages = (\[.*?\]);', html).group(1)
-        prefix = 'https://res.xiaoqinre.com/'
+        # prefix = 'https://res.xiaoqinre.com/'
+        prefix = 'https://img001.sdldcy.com/'
         image_urls = []
         for i in json.loads(chapterImages):
             image_url = prefix + chapterPath + i
