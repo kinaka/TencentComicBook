@@ -62,6 +62,9 @@ def parser_chapter_str(chapter_str, last_chapter_number=None, is_all=None):
 
 
 def find_all_image(img_dir, sort_by=None):
+    def _sort_by(x):
+        return int(x.split('.')[0])
+    sort_by = sort_by or _sort_by
     if not os.path.exists(img_dir):
         return []
     allow_image_suffix = ('jpg', 'jpeg', 'png', 'gif', 'webp')
