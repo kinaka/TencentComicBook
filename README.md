@@ -22,12 +22,15 @@
 ### 方式一（推荐）
 
 ```sh
-# 在线安装/升级
+# 在线安装/升级（最新版本）
 # 由于网络环境不好导致安装失败 可以搜索关键词尝试解决: github host 修改
 python3 -m pip install -U git+https://github.com/lossme/ComicBook
 
 # 查看帮助
 python3 -m onepiece --help
+
+# 安装指定版本
+python3 -m pip install git+https://github.com/lossme/ComicBook@v0.3.20
 ```
 
 ### 方式二（源码安装）
@@ -50,8 +53,8 @@ Star防止失联，欢迎大家提建议和issue，本项目持续更新。
 ## 常规使用
 
 ```sh
-# 从URL下载漫画的最新一集
-python3 -m onepiece --url "http://ac.qq.com/Comic/ComicInfo/id/505430"
+# 从章节列表页面的URL 下载漫画的最新一集
+python3 -m onepiece --url="http://ac.qq.com/Comic/ComicInfo/id/505430"
 
 # 下载漫画 id=505430 最新一集
 python3 -m onepiece --site=qq --comicid=505430
@@ -107,11 +110,15 @@ python3 -m onepiece --site=qq --comicid=505430 --pdf
 python3 -m onepiece --site=bilibili --comicid=mc24742 --chapter=1
 # 从有妖气漫画下载
 python3 -m onepiece --site=u17 --comicid=195 --chapter=1
+
+# 其它已支持的站点 https://github.com/lossme/ComicBook/projects/1
+# 从章节列表页面的URL
+python3 -m onepiece --url="https://manga.bilibili.com/detail/mc28603" --chapter=1
 ```
 
 ### 关于登录
 
-#### 方案1
+#### 方案一
 
 1. 安装selenium: `python3 -m pip install selenium`
 2. 安装chrome浏览器，或其它浏览器
@@ -129,7 +136,7 @@ python3 -m onepiece --site=qq --comicid=505430 --chapter=-1 \
 #### 方案二
 
 1. [安装EditThisCookie插件](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg)
-2. 登录某个站点，然后通过插件导出某个站点的cookies，并保存到本地文件 如`qq.json`
+2. 在浏览器上登录某个站点，然后通过插件导出某个站点的cookies，并保存到本地文件 如`qq.json`
 ```sh
 python3 -m onepiece --site=qq --comicid=505430 --chapter=-1 --cookies-path="qq.json"
 ```
