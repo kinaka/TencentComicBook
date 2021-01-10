@@ -111,4 +111,4 @@ class NvshensCrawler(CrawlerBase):
         return self.parse_book_list(soup)
 
     def latest(self, page=1):
-        return self.get_tag_result(tag=None, page=page)
+        return self.get_tag_result(tag='XiuRen', page=page)
