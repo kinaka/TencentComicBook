@@ -1,7 +1,10 @@
 import re
 import logging
 import json
-from urllib.parse import urljoin
+from urllib.parse import (
+    urljoin,
+    quote
+)
 
 import jsbeautifier
 from ..crawlerbase import CrawlerBase
@@ -76,7 +79,7 @@ class DmzjCrawler(CrawlerBase):
         image_urls = []
         image_prefix = 'https://images.dmzj.com'
         for url in data['page_url'].split('\n'):
-            image_url = urljoin(image_prefix, url.strip())
+            image_url = urljoin(image_prefix, quote(url.strip()))
             image_urls.append(image_url)
         return self.new_chapter_item(chapter_number=citem.chapter_number,
                                      title=citem.title,
