@@ -75,8 +75,8 @@ class DmzjCrawler(CrawlerBase):
         data = json.loads(json_str)
         image_urls = []
         image_prefix = 'https://images.dmzj.com'
-        for url in data['page_url'].split():
-            image_url = urljoin(image_prefix, url)
+        for url in data['page_url'].split('\n'):
+            image_url = urljoin(image_prefix, url.strip())
             image_urls.append(image_url)
         return self.new_chapter_item(chapter_number=citem.chapter_number,
                                      title=citem.title,
