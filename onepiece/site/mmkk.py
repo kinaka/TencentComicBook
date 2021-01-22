@@ -19,7 +19,7 @@ class MmkkCrawler(CrawlerBase):
     DEFAULT_SEARCH_NAME = ''
     DEFAULT_TAG = ""
     SITE_ENCODEING = 'utf-8'
-    COMICID_PATTERN = re.compile(r'/([_a-zA-Z0-9]+\/\d+)\.html')
+    COMICID_PATTERN = re.compile(r'mmkk\.me/([_a-zA-Z0-9]+\/\d+)\.html')
     SINGLE_CHAPTER = True
 
     @classmethod
@@ -68,7 +68,7 @@ class MmkkCrawler(CrawlerBase):
         for div in soup.find('div', {'id': 'masonry'}).find_all('div', recursive=False):
             href = div.a.get('href')
             source_url = urljoin(self.SITE_INDEX, href)
-            comicid = self.get_comicid_by_url(href)
+            comicid = self.get_comicid_by_url(source_url)
             name = div.img.get('alt')
             cover_image_url = div.img.get('data-original')
             result.add_result(comicid=comicid,

@@ -18,7 +18,7 @@ class PicxxxxCrawler(CrawlerBase):
     DEFAULT_COMICID = '2020-12-08-2750'
     DEFAULT_SEARCH_NAME = ''
     DEFAULT_TAG = ""
-    COMICID_PATTERN = re.compile(r'(\d{4}[\/\-]\d{2}[\/\-]\d{2}[\/\-]\d+)(?:\.html)?')
+    COMICID_PATTERN = re.compile(r'picxxxx\.top/(\d{4}[\/\-]\d{2}[\/\-]\d{2}[\/\-]\d+)(?:\.html)?')
     SINGLE_CHAPTER = True
 
     @classmethod
@@ -67,12 +67,12 @@ class PicxxxxCrawler(CrawlerBase):
         result = self.new_search_result_item()
         for li in soup.find('ul', {'id': 'masonry'}).find_all('li'):
             href = li.a.get('href')
-            comicid = self.get_comicid_by_url(href)
+            source_url = urljoin(self.SITE_INDEX, href)
+            comicid = self.get_comicid_by_url(source_url)
             name = comicid
             cover_image_url = ''
             if li.img:
-              cover_image_url = li.img.get('src')
-            source_url = urljoin(self.SITE_INDEX, href)
+                cover_image_url = li.img.get('src')
             result.add_result(comicid=comicid,
                               name=name,
                               cover_image_url=cover_image_url,

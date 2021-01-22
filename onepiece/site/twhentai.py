@@ -17,7 +17,7 @@ class C55comicCrawler(CrawlerBase):
     R18 = True
     SINGLE_CHAPTER = True
 
-    COMICID_PATTERN = re.compile(r'/([_a-zA-Z0-9]+/\d+)/?')
+    COMICID_PATTERN = re.compile(r'twhentai\.com/([_a-zA-Z0-9]+/\d+)/?')
     DEFAULT_COMICID = 'hentai_doujin-86561'
     DEFAULT_SEARCH_NAME = '姐姐'
     DEFAULT_TAG = ""
@@ -103,8 +103,8 @@ class C55comicCrawler(CrawlerBase):
                 .find_all('div', {'class': 'recommended-grids'}, recursive=False):
             for d in div.find_all('div', 'col-md-3 resent-grid recommended-grid'):
                 href = d.a.get('href')
-                comicid = self.get_comicid_by_url(href)
                 source_url = urljoin(self.SITE_INDEX, href)
+                comicid = self.get_comicid_by_url(source_url)
                 name = d.h5.text.strip()
                 cover_image_url = d.img.get('src')
                 if not cover_image_url.startswith('http'):

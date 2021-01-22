@@ -17,7 +17,7 @@ class ManhuataiCrawler(CrawlerBase):
     DEFAULT_COMICID = "doupocangqiong"
     DEFAULT_SEARCH_NAME = '斗破苍穹'
     DEFAULT_TAG = ""
-    COMICID_PATTERN = re.compile(r'([_a-zA-Z0-9\-]*)/?')
+    COMICID_PATTERN = re.compile(r'manhuatai\.com/([_a-zA-Z0-9\-]*)/?')
 
     @property
     def source_url(self):
