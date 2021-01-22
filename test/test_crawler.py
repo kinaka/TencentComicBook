@@ -145,3 +145,7 @@ def test_jmzj():
 
 def test_twhentai():
     _test_crawl_comicbook(site='twhentai')
+
+
+def test_copymanga():
+    _test_crawl_comicbook(site='copymanga')

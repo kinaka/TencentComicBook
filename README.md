@@ -96,14 +96,14 @@ python3 -m onepiece --url-file test/test-url-file.txt
 # 跟据名字搜索comicid
 python3 -m onepiece --site=qq --name=海贼
 
+# 生成pdf文件
+# 注意: 生成pdf文件需要额外安装依赖，需要先执行 python3 -m pip install img2pdf 或 python3 -m pip install reportlab
+python3 -m onepiece --site=qq --comicid=505430 --pdf
+
 # 推送到邮箱
 # 注意: 发送到邮箱需预先配置好信息 配样例参照 https://github.com/lossme/ComicBook/blob/master/config.ini.example
 # 并根据实际情况调整，将配置文件保存为 config.ini
 python3 -m onepiece --site=qq --comicid=505430 --pdf --mail --config config.ini
-
-# 生成pdf文件
-# 注意: 生成pdf文件需要额外安装依赖，需要先执行 python3 -m pip install img2pdf 或 python3 -m pip install reportlab
-python3 -m onepiece --site=qq --comicid=505430 --pdf
 ```
 
 从其它站点下载，注意不同站点的comicid区别
@@ -119,23 +119,6 @@ python3 -m onepiece --url="https://manga.bilibili.com/detail/mc28603" --chapter=
 ```
 
 ### 关于登录
-
-#### 方案一
-
-1. 安装selenium: `python3 -m pip install selenium`
-2. 安装chrome浏览器，或其它浏览器
-3. [下载chromedriver](https://chromedriver.chromium.org/downloads)，或其它浏览器的driver
-4. 登录，并将cookies保存在本地（保存登录状态）
-```sh
-# 在弹出的浏览器上完成登录。若登录完浏览器没自动关闭，可以手动把浏览器关了
-python3 -m onepiece --site=qq --comicid=505430 --chapter=-1 \
-  --login \
-  --driver-path="driver路径" \
-  --driver-type="Chrome" \
-  --cookies-path="data/cookies/qq.json"
-```
-
-#### 方案二
 
 1. [安装EditThisCookie插件](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg)
 2. 在浏览器上登录某个站点，然后通过插件导出某个站点的cookies，并保存到本地文件 如`qq.json`
