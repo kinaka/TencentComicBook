@@ -34,6 +34,8 @@ receivers=11111@qq.com,22222@qq.com
 # proxy_twhentai=socks5://127.0.0.1:1082
 # proxy_copymanga=socks5://127.0.0.1:1082
 # proxy_toomics=socks5://127.0.0.1:1082
+# proxy_webtoons=socks5://127.0.0.1:1082
+
 
 # webdriver 配置
 # driver_type=Chrome

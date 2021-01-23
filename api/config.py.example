@@ -31,6 +31,7 @@ class Config(object):
         'twhentai': DEFAULT_PROXY,
         'copymanga': DEFAULT_PROXY,
         'toomics': DEFAULT_PROXY,
+        'webtoons': DEFAULT_PROXY,
     }
 
     # 站点数据存放目录

@@ -81,6 +81,8 @@ class ToomicsCrawler(CrawlerBase):
                                      source_url=citem.source_url)
 
     def latest(self, page=1):
+        if page >= 2:
+            return self.new_search_result_item()
         url = 'https://toomics.com/sc/webtoon/ongoing_all'
         soup = self.get_soup(url)
         result = self.new_search_result_item()
@@ -113,6 +115,8 @@ class ToomicsCrawler(CrawlerBase):
         return tags
 
     def get_tag_result(self, tag, page=1):
+        if page >= 2:
+            return self.new_search_result_item()
         if not tag:
             url = 'https://toomics.com/sc/webtoon/ranking/'
         else:

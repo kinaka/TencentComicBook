@@ -149,3 +149,11 @@ def test_twhentai():
 
 def test_copymanga():
     _test_crawl_comicbook(site='copymanga')
+
+
+def test_toomics():
+    _test_crawl_comicbook(site='toomics', test_search=False)
+
+
+def test_webtoons():
+    _test_crawl_comicbook(site='webtoons', test_search=False)
