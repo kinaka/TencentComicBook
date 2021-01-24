@@ -44,7 +44,7 @@ receivers=11111@qq.com,22222@qq.com
 # node模块位置
 # node_modules=/home/key/js/node_modules
 
-# cookies存放目录
+# cookies存放目录（自动读取该目录下的cookeis文件），文件名命名规范: 如 toomics.json qq.json xx.json
 # cookies_dir=/home/key/data/cookies
 
 # 长图质量 最大100
