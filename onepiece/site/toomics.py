@@ -17,14 +17,18 @@ class ToomicsCrawler(CrawlerBase):
     DEFAULT_SEARCH_NAME = ''
     DEFAULT_TAG = "校园"
     SITE_ENCODEING = 'utf-8'
-    COMICID_PATTERN = re.compile(r'toomics\.com/(.*?)/webtoon/episode/toon/(\d+)')
+    COMICID_PATTERN1 = re.compile(r'toomics\.com/(.*?)/webtoon/episode/toon/(\d+)')
+    COMICID_PATTERN2 = re.compile(r'toomics\.com/(.*?)/webtoon/detail/code/\d+/ep/\d+/toon/(\d+)')
 
     @classmethod
     def get_comicid_by_url(cls, comicid_or_url):
         if comicid_or_url and isinstance(comicid_or_url, str):
-            r = cls.COMICID_PATTERN.search(comicid_or_url)
-            if r:
-                comicid = '%s-%s' % r.groups()
+            r1 = cls.COMICID_PATTERN1.search(comicid_or_url)
+            r2 = cls.COMICID_PATTERN2.search(comicid_or_url)
+            if r1:
+                comicid = '%s-%s' % r1.groups()
+            elif r2:
+                comicid = '%s-%s' % r2.groups()
             else:
                 comicid = comicid_or_url
             return comicid
