@@ -59,12 +59,13 @@ class ToomicsCrawler(CrawlerBase):
         for chapter_number, li in enumerate(li_list, start=1):
             onclick = li.a.get('onclick')
             r = re.search(r"(/[a-zA-Z_]+/webtoon/detail/code/\d+/ep/\d+/toon/\d+/?)", onclick)
-            href = r.group(1)
-            title = li.find('div', {'class': 'cell-title'}).text.strip()
-            url = urljoin(self.SITE_INDEX, href)
-            book.add_chapter(chapter_number=chapter_number,
-                             source_url=url,
-                             title=title)
+            if r:
+                href = r.group(1)
+                title = li.find('div', {'class': 'cell-title'}).text.strip()
+                url = urljoin(self.SITE_INDEX, href)
+                book.add_chapter(chapter_number=chapter_number,
+                                 source_url=url,
+                                 title=title)
         for tag_name in tag_list:
             book.add_tag(name=tag_name, tag=tag_name)
         return book
