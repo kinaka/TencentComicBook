@@ -157,3 +157,6 @@ python3 -m onepiece -s nhentai --search-all --search-name 汉化 --search-page 1
 # 配置默认的配置文件路径 配置文件示例 https://github.com/lossme/ComicBook/blob/master/config.ini.example
 export ONEPIECE_CONFIG_FILE="/home/key/MyConfig/config.ini"
 ```
+
+### 一个意义不明的群
+https://t.me/onecomicbook
