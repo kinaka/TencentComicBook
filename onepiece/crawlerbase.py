@@ -129,6 +129,9 @@ class SearchResultItem():
                      status=status, site=self.site, source_name=self.source_name)
         self._result.append(item)
 
+    def __len__(self):
+        return len(self._result)
+
     def __iter__(self):
         return iter(self._result)
 

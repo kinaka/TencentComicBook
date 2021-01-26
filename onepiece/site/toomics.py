@@ -29,6 +29,8 @@ class ToomicsCrawler(CrawlerBase):
                 comicid = '%s-%s' % r1.groups()
             elif r2:
                 comicid = '%s-%s' % r2.groups()
+            elif comicid_or_url.isdigit():
+                comicid = 'sc-%s' % comicid_or_url
             else:
                 comicid = comicid_or_url
             return comicid
@@ -88,22 +90,7 @@ class ToomicsCrawler(CrawlerBase):
                                      source_url=citem.source_url)
 
     def latest(self, page=1):
-        if page >= 2:
-            return self.new_search_result_item()
-        url = 'https://toomics.com/sc/webtoon/ongoing_all'
-        soup = self.get_soup(url)
-        result = self.new_search_result_item()
-        for li in soup.find('ul', {'class': 'allday'}).find_all('li'):
-            href = li.a.get('href')
-            source_url = urljoin(self.SITE_INDEX, href)
-            comicid = self.get_comicid_by_url(source_url)
-            name = li.h4.text
-            cover_image_url = li.img.get('data-original')
-            result.add_result(comicid=comicid,
-                              name=name,
-                              cover_image_url=cover_image_url,
-                              source_url=source_url)
-        return result
+        return self.get_tag_result(tag=None, page=page)
 
     def get_tags(self):
         url = 'https://toomics.com/sc/webtoon/ranking'

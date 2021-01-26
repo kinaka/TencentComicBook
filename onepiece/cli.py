@@ -208,40 +208,54 @@ def download_main(comicbook, output_dir, ext_name=None, chapters=None,
         logger.info("合并成单个zip文件 %s", merge_zip_path)
 
 
+def download_search_result(result, **kwargs):
+    for citem in result:
+        comicbook = ComicBook(site=citem.site, comicid=citem.comicid)
+        comicbook.start_crawler()
+        echo_comicbook_desc(
+            comicbook=comicbook,
+            ext_name=kwargs.get('ext_name')
+        )
+        download_main(comicbook=comicbook, **kwargs)
+
+
 def download_latest_all(page_str, **kwargs):
     comicbook = kwargs.pop('comicbook')
     page_str = page_str or '1'
     for page in parser_chapter_str(page_str):
-        logger.info('download_latest_all. current page=%s', page)
-        for citem in comicbook.latest(page=page):
-            next_comicbook = ComicBook(site=comicbook.crawler.SITE, comicid=citem.comicid)
-            next_comicbook.start_crawler()
-            echo_comicbook_desc(comicbook=next_comicbook, ext_name=kwargs.get('ext_name'))
-            download_main(comicbook=next_comicbook, **kwargs)
+        try:
+            result = comicbook.latest(page=page)
+            logger.info('download_latest_all. page=%s result=%s', page, len(result))
+        except Exception:
+            logger.info('download_latest_all error. page=%s', page)
+            continue
+        download_search_result(result, **kwargs)
 
 
 def download_tag_all(tag, page_str, **kwargs):
     comicbook = kwargs.pop('comicbook')
     page_str = page_str or '1'
     for page in parser_chapter_str(page_str):
-        logger.info('download_tag_all. current page=%s', page)
-        for citem in comicbook.get_tag_result(tag=tag, page=page):
-            next_comicbook = ComicBook(site=comicbook.crawler.SITE, comicid=citem.comicid)
-            next_comicbook.start_crawler()
-            echo_comicbook_desc(comicbook=next_comicbook, ext_name=kwargs.get('ext_name'))
-            download_main(comicbook=next_comicbook, **kwargs)
+        try:
+            result = comicbook.get_tag_result(tag=tag, page=page)
+            logger.info('download_tag_all. current page=%s result=%s', page, len(result))
+        except Exception:
+            logger.info('download_tag_all error. page=%s', page)
+            continue
+        download_search_result(result, **kwargs)
 
 
 def download_search_all(name, page_str, **kwargs):
     comicbook = kwargs.pop('comicbook')
     page_str = page_str or '1'
     for page in parser_chapter_str(page_str):
-        logger.info('download_search_all. current page=%s', page)
-        for citem in comicbook.search(name=name, page=page):
-            next_comicbook = ComicBook(site=comicbook.crawler.SITE, comicid=citem.comicid)
-            next_comicbook.start_crawler()
-            echo_comicbook_desc(comicbook=next_comicbook, ext_name=kwargs.get('ext_name'))
-            download_main(comicbook=next_comicbook, **kwargs)
+        try:
+            result = comicbook.search(name=name, page=page)
+            logger.info('download_search_all. current page=%s result=%s', page, len(result))
+        except Exception:
+            logger.info('search error. current page=%s', page)
+            continue
+        download_search_result(result, **kwargs)
 
 
 def download_url_list(config, url_file, **kwargs):
@@ -257,11 +271,15 @@ def download_url_list(config, url_file, **kwargs):
             if not site or not comicid:
                 logger.info('Unknown url. url=%s', url)
                 continue
-            comicbook = ComicBook(site=site, comicid=comicid)
-            init_crawler(site=site, config=config)
-            comicbook.start_crawler()
-            echo_comicbook_desc(comicbook=comicbook, ext_name=kwargs.get('ext_name'))
-            download_main(comicbook=comicbook, **kwargs)
+            try:
+                comicbook = ComicBook(site=site, comicid=comicid)
+                init_crawler(site=site, config=config)
+                comicbook.start_crawler()
+                echo_comicbook_desc(comicbook=comicbook, ext_name=kwargs.get('ext_name'))
+                download_main(comicbook=comicbook, **kwargs)
+            except Exception:
+                logger.info('download comicbook by url error. url=%s', url)
+                continue
 
 
 def show_tags(comicbook):
