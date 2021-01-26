@@ -60,7 +60,9 @@ class ToomicsCrawler(CrawlerBase):
                                        source_url=self.source_url)
         chapter_number = 1
         for li in soup.find('ol', {'class': 'list-ep'}).find_all('li'):
-            onclick = li.a.get('onclick')
+            if not li.a:
+                continue
+            onclick = li.a.get('onclick', '')
             r = re.search(r"(/[a-zA-Z_]+/webtoon/detail/code/\d+/ep/\d+/toon/\d+/?)", onclick)
             if r:
                 href = r.group(1)
