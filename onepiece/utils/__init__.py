@@ -90,6 +90,8 @@ def image_dir_to_single_image(img_dir, output_dir, sort_by=None, quality=None, m
 
     img_path_list = find_all_image(img_dir=img_dir, sort_by=sort_by)
     img_list = [Image.open(i) for i in img_path_list]
+    if not img_list:
+        return output_dir
     width = img_list[0].size[0]
 
     # 图片太大 先分组

@@ -2,6 +2,7 @@ import re
 import logging
 from urllib.parse import urljoin
 
+from ..exceptions import ChapterNotFound
 from ..crawlerbase import CrawlerBase
 
 logger = logging.getLogger(__name__)
@@ -82,8 +83,12 @@ class ToomicsCrawler(CrawlerBase):
         soup = self.get_soup(citem.source_url)
         div = soup.find('div', {'id': 'viewer-img'})
         image_urls = []
-        if div:
-            image_urls = [img.get('data-src') for img in div.find_all('img')]
+        if not div:
+            raise ChapterNotFound.from_template(site=self.SITE,
+                                                comicid=self.comicid,
+                                                chapter_number=citem.chapter_number,
+                                                source_url=citem.source_url)
+        image_urls = [img.get('data-src') for img in div.find_all('img')]
         return self.new_chapter_item(chapter_number=citem.chapter_number,
                                      title=citem.title,
                                      image_urls=image_urls,
