@@ -94,6 +94,8 @@ class CrawlerConfig(object):
         return config
 
     def get_proxy(self, site):
+        if self.args.proxy:
+            return self.args.proxy
         proxy = self.config.get(f'proxy_{site}', '')
         if not proxy:
             proxy = os.environ.get('ONEPIECE_PROXY_{}'.format(site.upper()))
