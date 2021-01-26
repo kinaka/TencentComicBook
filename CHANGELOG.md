@@ -1,4 +1,8 @@
 **unreleased**
+**v0.3.23**
+- toomics漫画下载优化
+- fix 命令行下proxy参数不生效
+
 **v0.3.22**
 - 添加漫画源: 拷贝漫画 Toomics webtoons
 - fix 动漫之家图片列表切割问题、url编码问题 #57
