@@ -69,7 +69,7 @@ class ToomicsCrawler(CrawlerBase):
             r = re.search(r"(/[a-zA-Z_]+/webtoon/detail/code/\d+/ep/\d+/toon/\d+/?)", onclick)
             if r:
                 href = r.group(1)
-                title = li.find('div', {'class': 'cell-title'}).text.strip()
+                title = li.find('div', {'class': 'cell-title'}).strong.text.strip()
                 url = urljoin(self.SITE_INDEX, href)
                 book.add_chapter(chapter_number=chapter_number,
                                  source_url=url,
