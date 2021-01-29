@@ -71,7 +71,8 @@ class Tuhao456Crawler(CrawlerBase):
         html = self.get_html(citem.source_url)
         js_str = re.search(r'var pages = (\{.*?\});', html).group(1)
         data = json.loads(js_str)
-        image_urls = [url for url in data['page_url'].split('|')]
+        logger.info('data=%s', data)
+        image_urls = [url for url in data['page_url'].split('|') if re.search('https?://.*', url)]
         return self.new_chapter_item(chapter_number=citem.chapter_number,
                                      title=citem.title,
                                      image_urls=image_urls,
