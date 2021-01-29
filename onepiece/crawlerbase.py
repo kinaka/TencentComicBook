@@ -375,7 +375,7 @@ class CrawlerBase():
         try:
             from selenium import webdriver
         except ImportError:
-            raise RuntimeError('pleaese install selenium first. python3 -m pip install selenium')
+            raise RuntimeError('pleaese install selenium first. python -m pip install selenium')
 
         if not self.DRIVER_PATH:
             raise RuntimeError("DRIVER_PATH must be set")
